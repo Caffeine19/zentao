@@ -1,8 +1,10 @@
 import { ActionPanel, Detail, Action, Icon, getPreferenceValues } from "@raycast/api";
 import { Task } from "../types/task";
-import { Preferences } from "../types/preferences";
 import { getStatusColor, getStatusLabel } from "../constants/status";
 import { getPriorityColor, getPriorityLabel } from "../constants/priority";
+import { TaskStatus } from "../constants/status";
+import { FinishTaskForm } from "./FinishTaskForm";
+import { t } from "../utils/i18n";
 
 interface TaskDetailProps {
   task: Task;
@@ -14,27 +16,27 @@ export function TaskDetail({ task }: TaskDetailProps) {
   const markdown = /* md */ `
 # ${task.title}
 
-## ⏱️ 工时信息
-- **📅 预计工时**: ${task.estimate || "未设置"}
-- **⚡ 已消耗工时**: ${task.consumed || "0"}
-- **⏳ 剩余工时**: ${task.left || "未计算"}
+## ⏱️ ${t("estimatedTime")}
+- **📅 ${t("estimatedTime")}**: ${task.estimate || t("notSet")}
+- **⚡ ${t("consumedTime")}**: ${task.consumed || "0"}
+- **⏳ ${t("remainingTime")}**: ${task.left || t("notCalculated")}
 `;
 
   return (
     <Detail
       markdown={markdown}
-      navigationTitle={`任务 #${task.id}`}
+      navigationTitle={`${t("taskTitle")} #${task.id}`}
       metadata={
         <Detail.Metadata>
-          <Detail.Metadata.Label title="任务 ID" text={task.id} />
+          <Detail.Metadata.Label title={`${t("taskTitle")} ID`} text={task.id} />
 
           <Detail.Metadata.Separator />
 
-          <Detail.Metadata.TagList title="状态">
+          <Detail.Metadata.TagList title={t("currentStatus")}>
             <Detail.Metadata.TagList.Item text={getStatusLabel(task.status)} color={getStatusColor(task.status)} />
           </Detail.Metadata.TagList>
 
-          <Detail.Metadata.TagList title="优先级">
+          <Detail.Metadata.TagList title={t("priority")}>
             <Detail.Metadata.TagList.Item
               text={`${getPriorityLabel(task.priority)}(${task.priority})`}
               color={getPriorityColor(task.priority)}
@@ -43,36 +45,42 @@ export function TaskDetail({ task }: TaskDetailProps) {
 
           <Detail.Metadata.Separator />
 
-          <Detail.Metadata.Label title="所属项目" text={task.project || "未指定"} />
-          <Detail.Metadata.Label title="指派给" text={task.assignedTo || "未指派"} />
+          <Detail.Metadata.Label title={t("project")} text={task.project || t("unknownError")} />
+          <Detail.Metadata.Label title={t("assignedTo")} text={task.assignedTo || t("notAssigned")} />
 
           <Detail.Metadata.Separator />
 
-          <Detail.Metadata.Label title="截止日期" text={task.deadline || "未设置"} />
+          <Detail.Metadata.Label title={t("deadline")} text={task.deadline || t("unknownError")} />
 
           <Detail.Metadata.Separator />
 
           <Detail.Metadata.Link
-            title="在禅道中打开"
+            title={t("openInZentao")}
             target={`${preferences.zentaoUrl}/task-view-${task.id}.html`}
-            text="查看完整详情"
+            text={t("viewTaskDetails")}
           />
         </Detail.Metadata>
       }
       actions={
         <ActionPanel>
+          {/* 只有未完成的任务才显示完成操作 */}
+          {task.status !== TaskStatus.DONE && task.status !== TaskStatus.CLOSED && (
+            <Action.Push title={t("finishTask")} icon={Icon.Checkmark} target={<FinishTaskForm task={task} />} />
+          )}
           <Action.OpenInBrowser
-            title="在禅道中打开"
+            title={t("openInZentao")}
             url={`${preferences.zentaoUrl}/task-view-${task.id}.html`}
             icon={Icon.Globe}
           />
-          <Action.CopyToClipboard title="复制任务 ID" content={task.id} icon={Icon.Clipboard} />
-          <Action.CopyToClipboard
-            title="复制任务 URL"
-            content={`${preferences.zentaoUrl}/task-view-${task.id}.html`}
-            icon={Icon.Link}
-          />
-          <Action.CopyToClipboard title="复制任务标题" content={task.title} icon={Icon.Text} />
+          <ActionPanel.Section title={t("copyTaskId")}>
+            <Action.CopyToClipboard title={t("copyTaskId")} content={task.id} icon={Icon.Clipboard} />
+            <Action.CopyToClipboard
+              title={t("copyUrl")}
+              content={`${preferences.zentaoUrl}/task-view-${task.id}.html`}
+              icon={Icon.Link}
+            />
+            <Action.CopyToClipboard title={t("copyTitle")} content={task.title} icon={Icon.Text} />
+          </ActionPanel.Section>
         </ActionPanel>
       }
     />

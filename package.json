@@ -40,12 +40,32 @@
       "title": "Username",
       "description": "Your Zentao username",
       "placeholder": "Your Zentao username"
+    },
+    {
+      "name": "language",
+      "type": "dropdown",
+      "required": true,
+      "title": "Language",
+      "description": "The language to use for the extension",
+      "data": [
+        {
+          "value": "zh-CN",
+          "title": "简体中文"
+        },
+        {
+          "value": "en-US",
+          "title": "English"
+        }
+      ],
+      "default": "en-US"
     }
   ],
   "dependencies": {
     "@raycast/api": "^1.102.3",
     "@raycast/utils": "^1.17.0",
-    "cheerio": "^1.1.2"
+    "cheerio": "^1.1.2",
+    "dayjs": "^1.11.13",
+    "react-hook-form": "^7.53.0"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",
