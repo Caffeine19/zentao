@@ -1,4 +1,5 @@
 import { TAILWIND_COLORS } from "./colors";
+import { Icon } from "@raycast/api";
 
 /**
  * 任务优先级枚举
@@ -29,17 +30,17 @@ export const PRIORITY_LABELS = {
  * 根据优先级获取显示标签
  */
 export function getPriorityLabel(priority: TaskPriority): string {
-  return PRIORITY_LABELS[priority];
+  return PRIORITY_LABELS[priority] || "未知优先级";
 }
 
 /**
  * 优先级颜色映射
  */
 export const PRIORITY_COLORS = {
-  [TaskPriority.CRITICAL]: TAILWIND_COLORS.red[600], // 紧急 - 深红色
-  [TaskPriority.HIGH]: TAILWIND_COLORS.red[400], // 重要 - 红色
-  [TaskPriority.MEDIUM]: TAILWIND_COLORS.blue[400], // 一般 - 琥珀色
-  [TaskPriority.LOW]: TAILWIND_COLORS.emerald[500], // 低优先级 - 翡翠绿
+  [TaskPriority.CRITICAL]: TAILWIND_COLORS.red[400], // 紧急 - 深红色
+  [TaskPriority.HIGH]: TAILWIND_COLORS.amber[300], // 重要 - 红色
+  [TaskPriority.MEDIUM]: TAILWIND_COLORS.blue[300], // 一般 - 琥珀色
+  [TaskPriority.LOW]: TAILWIND_COLORS.emerald[400], // 低优先级 - 翡翠绿
 } as const;
 
 /**
@@ -47,4 +48,20 @@ export const PRIORITY_COLORS = {
  */
 export function getPriorityColor(priority: TaskPriority): string {
   return PRIORITY_COLORS[priority] || TAILWIND_COLORS.gray[500];
+}
+
+/**
+ * 根据优先级获取图标
+ */
+export function getPriorityIcon(priority: TaskPriority): Icon {
+  switch (priority) {
+    case TaskPriority.CRITICAL:
+      return Icon.StackedBars4;
+    case TaskPriority.HIGH:
+      return Icon.StackedBars3;
+    case TaskPriority.MEDIUM:
+      return Icon.StackedBars2;
+    case TaskPriority.LOW:
+      return Icon.StackedBars1;
+  }
 }

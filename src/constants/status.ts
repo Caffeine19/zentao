@@ -1,4 +1,5 @@
 import { TAILWIND_COLORS } from "./colors";
+import { Icon, Color } from "@raycast/api";
 
 /**
  * 任务状态枚举
@@ -34,7 +35,7 @@ export const STATUS_LABELS = {
  * 根据状态获取显示标签
  */
 export function getStatusLabel(status: TaskStatus): string {
-  return STATUS_LABELS[status];
+  return STATUS_LABELS[status] || "未知状态";
 }
 
 /**
@@ -54,4 +55,52 @@ export const STATUS_COLORS = {
  */
 export function getStatusColor(status: TaskStatus): string {
   return STATUS_COLORS[status] || TAILWIND_COLORS.gray[500];
+}
+
+/**
+ * 任务状态图标映射
+ */
+export const STATUS_ICONS = {
+  [TaskStatus.WAIT]: Icon.Clock,
+  [TaskStatus.DOING]: Icon.ArrowClockwise,
+  [TaskStatus.DONE]: Icon.CheckCircle,
+  [TaskStatus.PAUSE]: Icon.Pause,
+  [TaskStatus.CANCEL]: Icon.XMarkCircle,
+  [TaskStatus.CLOSED]: Icon.Lock,
+} as const;
+
+/**
+ * 任务状态图标颜色映射
+ */
+export const STATUS_ICON_COLORS = {
+  [TaskStatus.WAIT]: Color.SecondaryText,
+  [TaskStatus.DOING]: Color.Blue,
+  [TaskStatus.DONE]: Color.Green,
+  [TaskStatus.PAUSE]: Color.SecondaryText,
+  [TaskStatus.CANCEL]: Color.SecondaryText,
+  [TaskStatus.CLOSED]: Color.SecondaryText,
+} as const;
+
+/**
+ * 根据状态获取图标
+ */
+export function getStatusIcon(status: TaskStatus): Icon {
+  return STATUS_ICONS[status] || Icon.Circle;
+}
+
+/**
+ * 根据状态获取图标颜色
+ */
+export function getStatusIconColor(status: TaskStatus): Color {
+  return STATUS_ICON_COLORS[status] || Color.SecondaryText;
+}
+
+/**
+ * 根据状态获取完整的图标配置（包含图标和颜色）
+ */
+export function getStatusIconConfig(status: TaskStatus): { source: Icon; tintColor: Color } {
+  return {
+    source: getStatusIcon(status),
+    tintColor: getStatusIconColor(status),
+  };
 }
