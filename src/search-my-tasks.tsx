@@ -1,7 +1,9 @@
-import { ActionPanel, Detail, List, Action, Icon, showToast, Toast, getPreferenceValues } from "@raycast/api";
+import { ActionPanel, List, Action, Icon, showToast, Toast, getPreferenceValues } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { Task } from "./types/task";
+import { Preferences } from "./types/preferences";
 import { fetchTasksFromZentao } from "./utils/taskService";
+import { TaskDetail } from "./components/TaskDetail";
 
 export default function Command() {
   const preferences = getPreferenceValues<Preferences>();
@@ -92,39 +94,7 @@ export default function Command() {
             accessories={[{ text: task.status }, { text: `#${task.id}` }]}
             actions={
               <ActionPanel>
-                <Action.Push
-                  title="View Task Details"
-                  target={
-                    <Detail
-                      markdown={`# ${task.title}
-
-**Task ID:** ${task.id}  
-**Status:** ${task.status}  
-**Project:** ${task.project}  
-**Assigned To:** ${task.assignedTo}  
-**Priority:** ${task.priority}  
-
----
-
-[Open in Zentao](${preferences.zentaoUrl}/task-view-${task.id}.html)
-`}
-                      actions={
-                        <ActionPanel>
-                          <Action.OpenInBrowser
-                            title="Open in Zentao"
-                            url={`${preferences.zentaoUrl}/task-view-${task.id}.html`}
-                          />
-                          <Action.CopyToClipboard title="Copy Task ID" content={task.id} />
-                          <Action.CopyToClipboard
-                            title="Copy Task URL"
-                            content={`${preferences.zentaoUrl}/task-view-${task.id}.html`}
-                          />
-                        </ActionPanel>
-                      }
-                    />
-                  }
-                  icon={Icon.Eye}
-                />
+                <Action.Push title="View Task Details" target={<TaskDetail task={task} />} icon={Icon.Eye} />
                 <Action.OpenInBrowser
                   title="Open in Zentao"
                   url={`${preferences.zentaoUrl}/task-view-${task.id}.html`}

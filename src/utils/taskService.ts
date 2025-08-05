@@ -4,6 +4,8 @@ import * as path from "path";
 import { Task } from "../types/task";
 import { Preferences } from "../types/preferences";
 import { getPreferenceValues } from "@raycast/api";
+import { TaskStatus } from "../constants/status";
+import { TaskPriority } from "../constants/priority";
 
 export function parseTasksFromHtml(html: string): Task[] {
   const tasks: Task[] = [];
@@ -68,11 +70,11 @@ export function parseTasksFromHtml(html: string): Task[] {
       tasks.push({
         id: taskId,
         title: title,
-        status: status,
+        status: status as TaskStatus,
         project: project,
         assignedTo: assignedTo,
         deadline: deadline,
-        priority: priority,
+        priority: priority as TaskPriority,
         estimate: estimate,
         consumed: consumed,
         left: left,
