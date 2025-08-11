@@ -90,6 +90,16 @@
     "loadFormDetailsError": "Failed to load form details",
     "unknownError": "Unknown error",
     "sessionExpired": "Login session expired",
-    "sessionExpiredDescription": "Please check if the Zentao session ID (zentaoSid) is correct, or log in to Zentao system again"
+    "sessionExpiredDescription": "Please check if the Zentao session ID (zentaoSid) is correct, or log in to Zentao system again",
+    "sessionExpiredAction": "Please use 'Refresh Session' action to renew your login session"
+  },
+  "sessionRefresh": {
+    "refreshSession": "Refresh Session",
+    "refreshingSession": "Refreshing session...",
+    "pleaseWait": "Please wait while we refresh your login session",
+    "sessionRefreshSuccess": "Session refresh successful",
+    "sessionRefreshSuccessDescription": "Your login session has been renewed successfully",
+    "sessionRefreshFailed": "Session refresh failed",
+    "sessionRefreshFailedDescription": "Please check your username and password in preferences"
   }
 }

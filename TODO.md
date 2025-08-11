@@ -1,2 +1,2 @@
-- [] 刷新session
-- [] get task detail
+- [x] 刷新session
+- [ ] get task detail

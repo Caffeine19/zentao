@@ -1,10 +1,12 @@
-import { ActionPanel, Detail, Action, Icon, getPreferenceValues } from "@raycast/api";
+import { ActionPanel, Detail, Action, Icon, getPreferenceValues, showToast, Toast } from "@raycast/api";
 import { Task } from "../types/task";
 import { getStatusColor, getStatusLabel } from "../constants/status";
 import { getPriorityColor, getPriorityLabel } from "../constants/priority";
 import { TaskStatus } from "../constants/status";
 import { FinishTaskForm } from "./FinishTaskForm";
 import { useT } from "../hooks/useT";
+import { reLoginUser } from "../utils/taskService";
+import { logger } from "../utils/logger";
 
 interface TaskDetailProps {
   task: Task;
@@ -14,6 +16,31 @@ export function TaskDetail({ task }: TaskDetailProps) {
   const preferences = getPreferenceValues<Preferences>();
 
   const { t } = useT();
+
+  const handleRefreshSession = async () => {
+    try {
+      showToast({
+        style: Toast.Style.Animated,
+        title: t("sessionRefresh.refreshingSession"),
+        message: t("sessionRefresh.pleaseWait"),
+      });
+
+      await reLoginUser();
+
+      showToast({
+        style: Toast.Style.Success,
+        title: t("sessionRefresh.sessionRefreshSuccess"),
+        message: t("sessionRefresh.sessionRefreshSuccessDescription"),
+      });
+    } catch (error) {
+      logger.error("Error during manual session refresh:", error instanceof Error ? error : String(error));
+      showToast({
+        style: Toast.Style.Failure,
+        title: t("sessionRefresh.sessionRefreshFailed"),
+        message: error instanceof Error ? error.message : t("errors.unknownError"),
+      });
+    }
+  };
 
   const markdown = /* md */ `
 ##   ${task.title}
@@ -79,6 +106,12 @@ export function TaskDetail({ task }: TaskDetailProps) {
             title={t("taskActions.openInZentao")}
             url={`${preferences.zentaoUrl}/task-view-${task.id}.html`}
             icon={Icon.Globe}
+          />
+          <Action
+            title={t("sessionRefresh.refreshSession")}
+            onAction={handleRefreshSession}
+            icon={Icon.Key}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
           />
           <ActionPanel.Section title={t("taskActions.copyTaskId")}>
             <Action.CopyToClipboard title={t("taskActions.copyTaskId")} content={task.id} icon={Icon.Clipboard} />

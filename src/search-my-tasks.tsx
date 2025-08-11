@@ -3,7 +3,9 @@ import { useEffect, useState, useMemo } from "react";
 import dayjs from "dayjs";
 import { unique, alphabetical, sift } from "radash";
 import { Task } from "./types/task";
-import { fetchTasksFromZentao, SessionExpiredError } from "./utils/taskService";
+import { fetchTasksFromZentao, reLoginUser } from "./utils/taskService";
+import { SessionExpiredError, LoginFailedError, LoginResponseParseError, SessionRefreshError } from "./utils/error";
+import { logger } from "./utils/logger";
 import { TaskDetail } from "./components/TaskDetail";
 import { getStatusIconConfig, TaskStatus } from "./constants/status";
 import { getPriorityColor, getPriorityLabel, getPriorityIcon } from "./constants/priority";
@@ -35,14 +37,14 @@ export default function Command() {
 
       setTasks(parsedTasks);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      logger.error("Error fetching tasks:", error instanceof Error ? error : String(error));
 
       // 检查是否是会话过期错误
       if (error instanceof SessionExpiredError) {
         showToast({
           style: Toast.Style.Failure,
           title: t("errors.sessionExpired"),
-          message: t("errors.sessionExpiredDescription"),
+          message: t("errors.sessionExpiredAction"),
         });
       } else {
         showToast({
@@ -53,6 +55,48 @@ export default function Command() {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRefreshSession = async () => {
+    try {
+      showToast({
+        style: Toast.Style.Animated,
+        title: t("sessionRefresh.refreshingSession"),
+        message: t("sessionRefresh.pleaseWait"),
+      });
+
+      await reLoginUser();
+
+      showToast({
+        style: Toast.Style.Success,
+        title: t("sessionRefresh.sessionRefreshSuccess"),
+        message: t("sessionRefresh.sessionRefreshSuccessDescription"),
+      });
+
+      // 会话刷新成功后，重新获取任务
+      await fetchTasks();
+    } catch (error) {
+      logger.error("Error during manual session refresh:", error instanceof Error ? error : String(error));
+
+      // 根据不同的错误类型提供更具体的错误信息
+      let errorMessage = t("errors.unknownError");
+
+      if (error instanceof LoginFailedError) {
+        errorMessage = error.message;
+      } else if (error instanceof LoginResponseParseError) {
+        errorMessage = "登录响应解析失败，请检查网络连接";
+      } else if (error instanceof SessionRefreshError) {
+        errorMessage = error.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      showToast({
+        style: Toast.Style.Failure,
+        title: t("sessionRefresh.sessionRefreshFailed"),
+        message: errorMessage,
+      });
     }
   };
 
@@ -160,6 +204,12 @@ export default function Command() {
       actions={
         <ActionPanel>
           <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
+          <Action
+            title={t("sessionRefresh.refreshSession")}
+            onAction={handleRefreshSession}
+            icon={Icon.Key}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
+          />
           <ActionPanel.Section title={t("taskList.filterByProject")}>
             <Action title={t("taskList.allProjects")} onAction={() => setSelectedProject("all")} icon={Icon.Circle} />
             {uniqueProjects.slice(0, 5).map((project) => (
@@ -215,6 +265,12 @@ export default function Command() {
           actions={
             <ActionPanel>
               <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
+              <Action
+                title={t("sessionRefresh.refreshSession")}
+                onAction={handleRefreshSession}
+                icon={Icon.Key}
+                shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
+              />
             </ActionPanel>
           }
         />
@@ -273,6 +329,12 @@ export default function Command() {
                   />
                   <Action.CopyToClipboard title={t("taskActions.copyTaskId")} content={task.id} icon={Icon.Clipboard} />
                   <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
+                  <Action
+                    title={t("sessionRefresh.refreshSession")}
+                    onAction={handleRefreshSession}
+                    icon={Icon.Key}
+                    shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
+                  />
                   <ActionPanel.Section title={t("taskList.filterByProject")}>
                     <Action
                       title={t("taskList.allProjects")}

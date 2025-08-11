@@ -42,6 +42,14 @@
       "placeholder": "Your Zentao username"
     },
     {
+      "name": "password",
+      "type": "password",
+      "required": true,
+      "title": "Password",
+      "description": "Your Zentao password (used for session refresh)",
+      "placeholder": "Your Zentao password"
+    },
+    {
       "name": "language",
       "type": "dropdown",
       "required": true,

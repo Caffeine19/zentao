@@ -90,6 +90,16 @@
     "loadFormDetailsError": "加载表单详情失败",
     "unknownError": "未知错误",
     "sessionExpired": "登录会话已过期",
-    "sessionExpiredDescription": "请检查禅道的会话ID (zentaoSid) 是否正确，或者重新登录禅道系统"
+    "sessionExpiredDescription": "请检查禅道的会话ID (zentaoSid) 是否正确，或者重新登录禅道系统",
+    "sessionExpiredAction": "请使用\"刷新会话\"操作来续期您的登录会话"
+  },
+  "sessionRefresh": {
+    "refreshSession": "刷新会话",
+    "refreshingSession": "正在刷新会话...",
+    "pleaseWait": "请稍等，正在刷新您的登录会话",
+    "sessionRefreshSuccess": "会话刷新成功",
+    "sessionRefreshSuccessDescription": "您的登录会话已成功续期",
+    "sessionRefreshFailed": "会话刷新失败",
+    "sessionRefreshFailedDescription": "请检查偏好设置中的用户名和密码"
   }
 }
