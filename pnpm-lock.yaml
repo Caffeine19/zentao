@@ -20,9 +20,15 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      fuse.js:
+        specifier: ^7.1.0
+        version: 7.1.0
       i18next:
         specifier: ^25.3.2
         version: 25.3.2(typescript@5.9.2)
+      pinyin-match:
+        specifier: ^1.2.8
+        version: 1.2.8
       radash:
         specifier: ^12.1.1
         version: 12.1.1
@@ -806,6 +812,10 @@ packages:
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
 
+  fuse.js@7.1.0:
+    resolution: {integrity: sha512-trLf4SzuuUxfusZADLINj+dE8clK1frKdmqiJNb1Es75fmI5oY6X2mxLVUciLLjxqw/xr72Dhy+lER6dGd02FQ==}
+    engines: {node: '>=10'}
+
   get-package-type@0.1.0:
     resolution: {integrity: sha512-pjzuKtY64GYfWizNAJ0fr9VqttZkNiK2iS430LtIHzjBEr6bX8Am2zm4sW4Ro5wjWW5cAlRL1qAMTcXbjNAO2Q==}
     engines: {node: '>=8.0.0'}
@@ -1031,6 +1041,9 @@ packages:
   picomatch@4.0.3:
     resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
+
+  pinyin-match@1.2.8:
+    resolution: {integrity: sha512-5rBwNuOjnOtZNEgX4OlTLYsmBcE9XSV1oF/KN9mLEsVNr8HdqMb2YRhR6iqHMeU8ZBKbx/oYBgHr04uIvOlxGg==}
 
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -2025,6 +2038,8 @@ snapshots:
 
   flatted@3.3.3: {}
 
+  fuse.js@7.1.0: {}
+
   get-package-type@0.1.0: {}
 
   glob-parent@5.1.2:
@@ -2212,6 +2227,8 @@ snapshots:
   picomatch@2.3.1: {}
 
   picomatch@4.0.3: {}
+
+  pinyin-match@1.2.8: {}
 
   prelude-ls@1.2.1: {}
 

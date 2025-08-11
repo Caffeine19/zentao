@@ -10,6 +10,7 @@ import { getStatusIconConfig, TaskStatus } from "./constants/status";
 import { useT } from "./hooks/useT";
 import { Task } from "./types/task";
 import { LoginFailedError, LoginResponseParseError, SessionExpiredError, SessionRefreshError } from "./utils/error";
+import { searchTasks } from "./utils/fuseSearch";
 import { logger } from "./utils/logger";
 import { reLoginUser } from "./utils/loginService";
 import { slice } from "./utils/slice";
@@ -26,6 +27,7 @@ export default function Command() {
   const [isLoading, setIsLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState<SortOrder>("none");
   const [selectedProject, setSelectedProject] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const fetchTasks = async () => {
     try {
@@ -133,8 +135,15 @@ export default function Command() {
     return tasks.filter((task) => task.project === selectedProject);
   }, [tasks, selectedProject]);
 
+  /**
+   * 根据搜索查询筛选任务（使用 Fuse.js 和拼音搜索）
+   */
+  const searchedTasks = useMemo(() => {
+    return searchTasks(filteredTasks, searchQuery);
+  }, [filteredTasks, searchQuery]);
+
   const sortedTasks = useMemo(() => {
-    const tasksToSort = filteredTasks;
+    const tasksToSort = searchedTasks;
     if (sortOrder === "none") return tasksToSort;
 
     const sorted = [...tasksToSort].sort((a, b) => {
@@ -187,7 +196,7 @@ export default function Command() {
     });
 
     return sorted;
-  }, [filteredTasks, sortOrder]);
+  }, [searchedTasks, sortOrder]);
 
   if (isLoading) {
     return <List isLoading={true} searchBarPlaceholder={t("general.loading")} />;
@@ -197,8 +206,10 @@ export default function Command() {
     <List
       isLoading={isLoading}
       searchBarPlaceholder={t("taskList.searchPlaceholder")}
-      filtering={true}
+      filtering={false} // Disable Raycast's filtering since we handle search ourselves
       navigationTitle={t("taskList.myTasks")}
+      onSearchTextChange={setSearchQuery}
+      searchText={searchQuery}
       searchBarAccessory={
         <List.Dropdown
           tooltip={t("taskList.filterByProject")}
@@ -298,16 +309,12 @@ export default function Command() {
             !(dayjs(task.deadline).format("MM DD") === dayjs().format("MM DD")) &&
             dayjs(task.deadline).year(dayjs().year()).isBefore(dayjs());
 
-          // Format deadline for display using dayjs
-          const deadlineDisplay = task.deadline && dayjs(task.deadline).format("MM-DD");
-
           return (
             <List.Item
               key={task.id}
               icon={getStatusIconConfig(task.status)}
               title={task.title}
               subtitle={task.project}
-              keywords={[task.status, task.priority, task.assignedTo || "", deadlineDisplay]}
               accessories={[
                 ...(task.deadline
                   ? [
