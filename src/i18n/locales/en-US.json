@@ -76,6 +76,8 @@
     "priority": "Priority",
     "assignedTo": "Assigned To",
     "deadline": "Deadline",
+    "estimatedStart": "Estimated Start",
+    "actualStart": "Actual Start",
     "estimatedTime": "Estimated Time",
     "consumedTime": "Consumed Time",
     "remainingTime": "Remaining Time",
@@ -84,7 +86,13 @@
     "copyTitle": "Copy Task Title",
     "notSet": "Not Set",
     "notCalculated": "Not Calculated",
-    "notAssigned": "Not Assigned"
+    "notAssigned": "Not Assigned",
+    "notStarted": "Not Started",
+    "loadingTaskDetail": "Loading task details...",
+    "pleaseWait": "Please wait",
+    "loadTaskDetailSuccess": "Task details loaded successfully",
+    "taskDetailLoaded": "Task details updated",
+    "loadTaskDetailFailed": "Failed to load task details"
   },
   "errors": {
     "loadFormDetailsError": "Failed to load form details",

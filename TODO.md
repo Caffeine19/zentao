@@ -1,2 +1,2 @@
 - [x] 刷新session
-- [ ] get task detail
+- [ ] get task detail, and use detail info to auto fill complete task form

@@ -100,6 +100,8 @@ export function parseTasksFromHtml(html: string): Task[] {
         estimate: estimate,
         consumed: consumed,
         left: left,
+        estimatedStart: "", // 在任务列表页面通常不显示，使用空字符串作为默认值
+        actualStart: "", // 在任务列表页面通常不显示，使用空字符串作为默认值
       });
     });
 
@@ -203,6 +205,139 @@ export function parseTaskFormDetails(html: string): TaskFormDetails {
     realStarted,
     finishedDate,
     uid,
+  };
+}
+
+/**
+ * 获取单个任务的详细信息
+ * @param taskId - 任务ID
+ */
+export async function fetchTaskDetail(taskId: string): Promise<Task> {
+  const preferences = getPreferenceValues<Preferences>();
+  const { zentaoUrl, zentaoSid, username } = preferences;
+
+  try {
+    const url = `${zentaoUrl}/task-view-${taskId}.html`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7",
+        Connection: "keep-alive",
+        Cookie: `zentaosid=${zentaoSid}; lang=zh-cn; device=desktop; theme=default; keepLogin=on; za=${username}`,
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const html = await response.text();
+
+    // 检查会话是否已过期
+    if (isSessionExpired(html)) {
+      logger.info("Session expired detected in task detail");
+      throw new SessionExpiredError();
+    }
+
+    // 保存 HTML 到日志文件用于调试
+    logger.saveApiResponse("task-detail.html", html);
+
+    return parseTaskDetailFromHtml(html, taskId);
+  } catch (error) {
+    logger.error("Error fetching task detail:", error instanceof Error ? error : String(error));
+    throw error;
+  }
+}
+
+/**
+ * 从任务详情页面 HTML 解析任务信息
+ * @param html - 任务详情页面的 HTML 内容
+ * @param taskId - 任务ID
+ */
+export function parseTaskDetailFromHtml(html: string, taskId: string): Task {
+  const $ = cheerio.load(html);
+
+  // 从页面标题提取任务标题
+  const fullTitle = $("title").text();
+  const titleMatch = fullTitle.match(/TASK#\d+\s+(.+?)\s+\/\s+/);
+  const title = titleMatch ? titleMatch[1].trim() : $("h1").text().trim();
+
+  // 从基本信息表格提取数据
+  const basicTable = $("#legendBasic table.table-data");
+
+  // 获取所属执行（项目）
+  const project =
+    basicTable.find("tr").eq(0).find("td a").text().trim() ||
+    basicTable.find("th:contains('所属执行')").next("td").find("a").text().trim();
+
+  // 获取指派给
+  const assignedToText = basicTable.find("th:contains('指派给')").next("td").text().trim();
+  const assignedToMatch = assignedToText.match(/^([^\s]+)/);
+  const assignedTo = assignedToMatch ? assignedToMatch[1] : "";
+
+  // 获取任务状态
+  const statusElement = basicTable.find("th:contains('任务状态')").next("td").find(".status-task");
+  let status = statusElement.text().trim();
+  // 移除状态文本中的标签符号
+  status = status.replace(/^\s*•\s*/, "").trim();
+
+  // 获取优先级
+  const priorityText = basicTable.find("th:contains('优先级')").next("td").find(".label-pri").text().trim();
+  let priority: TaskPriority;
+  const priorityNum = parseInt(priorityText);
+  if (priorityNum === 1) {
+    priority = TaskPriority.CRITICAL;
+  } else if (priorityNum === 2) {
+    priority = TaskPriority.HIGH;
+  } else if (priorityNum === 3) {
+    priority = TaskPriority.MEDIUM;
+  } else if (priorityNum === 4) {
+    priority = TaskPriority.LOW;
+  } else {
+    priority = TaskPriority.MEDIUM;
+  }
+
+  // 从工时信息表格提取数据
+  const effortTable = $("#legendEffort table.table-data");
+
+  // 获取最初预计工时
+  const estimateText = effortTable.find("th:contains('最初预计')").next("td").text().trim();
+  const estimate = estimateText.replace(/工时$/, "").trim();
+
+  // 获取总计消耗工时
+  const consumedText = effortTable.find("th:contains('总计消耗')").next("td").text().trim();
+  const consumed = consumedText.replace(/工时$/, "").trim();
+
+  // 获取预计剩余工时
+  const leftText = effortTable.find("th:contains('预计剩余')").next("td").text().trim();
+  const left = leftText.replace(/工时$/, "").trim();
+
+  // 获取截止日期
+  const deadline = effortTable.find("th:contains('截止日期')").next("td").text().trim();
+
+  // 获取预计开始时间
+  const estimatedStart = effortTable.find("th:contains('预计开始')").next("td").text().trim();
+
+  // 获取实际开始时间
+  const actualStart = effortTable.find("th:contains('实际开始')").next("td").text().trim();
+
+  return {
+    id: taskId,
+    title,
+    status: status as TaskStatus,
+    project,
+    assignedTo,
+    deadline,
+    priority,
+    estimate,
+    consumed,
+    left,
+    estimatedStart,
+    actualStart,
   };
 }
 

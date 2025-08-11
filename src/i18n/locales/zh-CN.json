@@ -76,6 +76,8 @@
     "priority": "优先级",
     "assignedTo": "指派人",
     "deadline": "截止日期",
+    "estimatedStart": "预计开始",
+    "actualStart": "实际开始",
     "estimatedTime": "预计工时",
     "consumedTime": "已消耗",
     "remainingTime": "剩余工时",
@@ -84,7 +86,13 @@
     "copyTitle": "复制任务标题",
     "notSet": "未设置",
     "notCalculated": "未计算",
-    "notAssigned": "未指派"
+    "notAssigned": "未指派",
+    "notStarted": "暂未开始",
+    "loadingTaskDetail": "正在加载任务详情...",
+    "pleaseWait": "请稍等",
+    "loadTaskDetailSuccess": "任务详情加载成功",
+    "taskDetailLoaded": "任务详情已更新",
+    "loadTaskDetailFailed": "加载任务详情失败"
   },
   "errors": {
     "loadFormDetailsError": "加载表单详情失败",

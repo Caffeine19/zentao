@@ -25,4 +25,8 @@ export interface Task {
   consumed: string;
   /** 剩余工时 */
   left: string;
+  /** 预计开始时间 */
+  estimatedStart: string;
+  /** 实际开始时间 */
+  actualStart: string;
 }
