@@ -11,11 +11,13 @@ import { getStatusIconConfig, TaskStatus } from "./constants/status";
 import { getPriorityColor, getPriorityLabel, getPriorityIcon } from "./constants/priority";
 import { TAILWIND_COLORS } from "./constants/colors";
 import { useT } from "./hooks/useT";
+import { slice } from "./utils/slice";
 
 type SortOrder = "none" | "date-asc" | "date-desc" | "priority-asc" | "priority-desc" | "status-asc" | "status-desc";
 
 export default function Command() {
   const preferences = getPreferenceValues<Preferences>();
+
   const { t } = useT();
 
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -104,15 +106,24 @@ export default function Command() {
     fetchTasks();
   }, []);
 
-  // 获取所有唯一的项目列表
-  const uniqueProjects = useMemo(() => {
-    // 使用 radash 的 sift 过滤掉空值，unique 去重，alphabetical 排序
+  /**
+   * 项目列表及任务数量
+   */
+  const projectList = useMemo(() => {
     const projects = sift(tasks.map((task) => task.project));
     const uniqueProjectList = unique(projects, (project) => project);
-    return alphabetical(uniqueProjectList, (project) => project);
+    const sortedProjects = alphabetical(uniqueProjectList, (project) => project);
+
+    // 计算每个项目的任务数量
+    return sortedProjects.map((project) => ({
+      name: project,
+      count: tasks.filter((task) => task.project === project).length,
+    }));
   }, [tasks]);
 
-  // 根据项目筛选任务
+  /**
+   * 根据项目筛选任务
+   */
   const filteredTasks = useMemo(() => {
     if (selectedProject === "all") {
       return tasks;
@@ -120,7 +131,6 @@ export default function Command() {
     return tasks.filter((task) => task.project === selectedProject);
   }, [tasks, selectedProject]);
 
-  // Sort tasks based on current sort order
   const sortedTasks = useMemo(() => {
     const tasksToSort = filteredTasks;
     if (sortOrder === "none") return tasksToSort;
@@ -195,10 +205,16 @@ export default function Command() {
             setSelectedProject(newValue);
           }}
         >
-          <List.Dropdown.Item title={t("taskList.allProjects")} value="all" />
-          {uniqueProjects.map((project) => (
-            <List.Dropdown.Item key={project} title={project} value={project} />
-          ))}
+          <List.Dropdown.Item title={`${t("taskList.allProjects")} (${tasks.length})`} value="all" />
+          {projectList.map((project) => {
+            return (
+              <List.Dropdown.Item
+                key={project.name}
+                title={`${slice(project.name, 14)} ( ${project.count} )`}
+                value={project.name}
+              />
+            );
+          })}
         </List.Dropdown>
       }
       actions={
@@ -210,12 +226,6 @@ export default function Command() {
             icon={Icon.Key}
             shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
           />
-          <ActionPanel.Section title={t("taskList.filterByProject")}>
-            <Action title={t("taskList.allProjects")} onAction={() => setSelectedProject("all")} icon={Icon.Circle} />
-            {uniqueProjects.slice(0, 5).map((project) => (
-              <Action key={project} title={project} onAction={() => setSelectedProject(project)} icon={Icon.Folder} />
-            ))}
-          </ActionPanel.Section>
           <ActionPanel.Section title={t("sortActions.sortByDate")}>
             <Action
               title={t("sortActions.sortByDateEarliestFirst")}
@@ -335,21 +345,7 @@ export default function Command() {
                     icon={Icon.Key}
                     shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
                   />
-                  <ActionPanel.Section title={t("taskList.filterByProject")}>
-                    <Action
-                      title={t("taskList.allProjects")}
-                      onAction={() => setSelectedProject("all")}
-                      icon={Icon.Circle}
-                    />
-                    {uniqueProjects.slice(0, 5).map((project) => (
-                      <Action
-                        key={project}
-                        title={project}
-                        onAction={() => setSelectedProject(project)}
-                        icon={Icon.Folder}
-                      />
-                    ))}
-                  </ActionPanel.Section>
+
                   <ActionPanel.Section title={t("sortActions.sortByDate")}>
                     <Action
                       title={t("sortActions.sortByDateEarliestFirst")}
@@ -362,6 +358,7 @@ export default function Command() {
                       icon={Icon.ArrowDown}
                     />
                   </ActionPanel.Section>
+
                   <ActionPanel.Section title={t("sortActions.sortByPriority")}>
                     <Action
                       title={t("sortActions.sortByPriorityHighToLow")}
@@ -374,6 +371,7 @@ export default function Command() {
                       icon={Icon.ArrowDown}
                     />
                   </ActionPanel.Section>
+
                   <ActionPanel.Section title={t("sortActions.sortByStatus")}>
                     <Action
                       title={t("sortActions.sortByStatusActiveFirst")}
@@ -386,6 +384,7 @@ export default function Command() {
                       icon={Icon.ArrowDown}
                     />
                   </ActionPanel.Section>
+
                   <ActionPanel.Section title={t("sortActions.resetSort")}>
                     <Action
                       title={t("sortActions.resetSort")}
