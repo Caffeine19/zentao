@@ -1,12 +1,13 @@
-import { ActionPanel, Detail, Action, Icon, getPreferenceValues, showToast, Toast } from "@raycast/api";
-import { Task } from "../types/task";
-import { getStatusColor, getStatusLabel } from "../constants/status";
+import { Action, ActionPanel, Detail, getPreferenceValues, Icon, showToast, Toast } from "@raycast/api";
+
 import { getPriorityColor, getPriorityLabel } from "../constants/priority";
+import { getStatusColor, getStatusLabel } from "../constants/status";
 import { TaskStatus } from "../constants/status";
-import { FinishTaskForm } from "./FinishTaskForm";
 import { useT } from "../hooks/useT";
-import { reLoginUser } from "../utils/taskService";
+import { Task } from "../types/task";
 import { logger } from "../utils/logger";
+import { reLoginUser } from "../utils/taskService";
+import { FinishTaskForm } from "./FinishTaskForm";
 
 interface TaskDetailProps {
   task: Task;

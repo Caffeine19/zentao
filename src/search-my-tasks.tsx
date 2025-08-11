@@ -1,17 +1,18 @@
-import { ActionPanel, List, Action, Icon, showToast, Toast, getPreferenceValues } from "@raycast/api";
-import { useEffect, useState, useMemo } from "react";
+import { Action, ActionPanel, getPreferenceValues, Icon, List, showToast, Toast } from "@raycast/api";
 import dayjs from "dayjs";
-import { unique, alphabetical, sift } from "radash";
-import { Task } from "./types/task";
-import { fetchTasksFromZentao, reLoginUser } from "./utils/taskService";
-import { SessionExpiredError, LoginFailedError, LoginResponseParseError, SessionRefreshError } from "./utils/error";
-import { logger } from "./utils/logger";
+import { alphabetical, sift, unique } from "radash";
+import { useEffect, useMemo, useState } from "react";
+
 import { TaskDetail } from "./components/TaskDetail";
-import { getStatusIconConfig, TaskStatus } from "./constants/status";
-import { getPriorityColor, getPriorityLabel, getPriorityIcon } from "./constants/priority";
 import { TAILWIND_COLORS } from "./constants/colors";
+import { getPriorityColor, getPriorityIcon, getPriorityLabel } from "./constants/priority";
+import { getStatusIconConfig, TaskStatus } from "./constants/status";
 import { useT } from "./hooks/useT";
+import { Task } from "./types/task";
+import { LoginFailedError, LoginResponseParseError, SessionExpiredError, SessionRefreshError } from "./utils/error";
+import { logger } from "./utils/logger";
 import { slice } from "./utils/slice";
+import { fetchTasksFromZentao, reLoginUser } from "./utils/taskService";
 
 type SortOrder = "none" | "date-asc" | "date-desc" | "priority-asc" | "priority-desc" | "status-asc" | "status-desc";
 

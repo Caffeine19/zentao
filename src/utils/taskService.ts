@@ -1,15 +1,16 @@
-import * as cheerio from "cheerio";
-import { Task } from "../types/task";
-import { TeamMember } from "../types/teamMember";
-import { TaskFormDetails } from "../types/taskFormDetails";
 import { getPreferenceValues } from "@raycast/api";
-import { TaskStatus } from "../constants/status";
+import * as cheerio from "cheerio";
+
 import { TaskPriority } from "../constants/priority";
+import { TaskStatus } from "../constants/status";
+import { Task } from "../types/task";
+import { TaskFormDetails } from "../types/taskFormDetails";
+import { TeamMember } from "../types/teamMember";
 import {
-  LoginResult,
-  SessionExpiredError,
   LoginFailedError,
   LoginResponseParseError,
+  LoginResult,
+  SessionExpiredError,
   SessionRefreshError,
 } from "./error";
 import { logger } from "./logger";

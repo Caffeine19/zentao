@@ -1,7 +1,8 @@
 // import the original type declarations
 import "i18next";
+
 // import all namespaces (for the default language, only)
-import { resources, defaultNS } from "../i18n";
+import { defaultNS, resources } from "../i18n";
 
 declare module "i18next" {
   // Extend CustomTypeOptions

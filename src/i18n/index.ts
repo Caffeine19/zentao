@@ -1,10 +1,10 @@
+import { getPreferenceValues } from "@raycast/api";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { getPreferenceValues } from "@raycast/api";
 
+import enUS from "./locales/en-US.json";
 // 导入翻译资源
 import zhCN from "./locales/zh-CN.json";
-import enUS from "./locales/en-US.json";
 
 export type Language = "zh-CN" | "en-US";
 

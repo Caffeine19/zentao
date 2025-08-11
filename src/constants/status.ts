@@ -1,5 +1,6 @@
+import { Color, Icon } from "@raycast/api";
+
 import { TAILWIND_COLORS } from "./colors";
-import { Icon, Color } from "@raycast/api";
 
 /**
  * 任务状态枚举
