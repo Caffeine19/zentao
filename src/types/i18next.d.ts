@@ -1,18 +1,14 @@
 // import the original type declarations
 import "i18next";
 // import all namespaces (for the default language, only)
-import zhCN from "../i18n/locales/zh-CN.json";
-import enUS from "../i18n/locales/en-US.json";
+import { resources, defaultNS } from "../i18n";
 
 declare module "i18next" {
   // Extend CustomTypeOptions
   interface CustomTypeOptions {
     // custom namespace type, if you changed it
-    defaultNS: Preferences["language"];
+    defaultNS: typeof defaultNS;
     // custom resources type
-    resources: {
-      "zh-CN": typeof zhCN;
-      "en-US": typeof enUS;
-    };
+    resources: (typeof resources)["en-US"];
   }
 }

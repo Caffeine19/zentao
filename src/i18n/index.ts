@@ -8,6 +8,17 @@ import enUS from "./locales/en-US.json";
 
 export type Language = "zh-CN" | "en-US";
 
+// 导出用于TypeScript类型定义的常量
+export const defaultNS = "translation";
+export const resources = {
+  "zh-CN": {
+    translation: zhCN,
+  },
+  "en-US": {
+    translation: enUS,
+  },
+} as const;
+
 /**
  * 获取当前用户偏好的语言设置
  * @returns 用户配置的语言代码
@@ -22,14 +33,7 @@ i18n
   .use(initReactI18next) // 使用 react-i18next 插件
   .init({
     // 翻译资源
-    resources: {
-      "zh-CN": {
-        translation: zhCN,
-      },
-      "en-US": {
-        translation: enUS,
-      },
-    },
+    resources,
 
     // 默认语言
     lng: getUserLanguage(),
@@ -46,8 +50,15 @@ i18n
     },
 
     // 命名空间配置
-    defaultNS: "en-US",
-    ns: ["en-US", "zh-CN"],
+    defaultNS,
+    ns: ["translation"],
+
+    // 缓存配置
+    saveMissing: false,
+
+    // 键分隔符配置
+    keySeparator: ".",
+    nsSeparator: ":",
   });
 
 export default i18n;
