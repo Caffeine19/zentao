@@ -2,7 +2,7 @@ import { ActionPanel, List, Action, Icon, showToast, Toast, getPreferenceValues 
 import { useEffect, useState, useMemo } from "react";
 import dayjs from "dayjs";
 import { Task } from "./types/task";
-import { fetchTasksFromZentao } from "./utils/taskService";
+import { fetchTasksFromZentao, SessionExpiredError } from "./utils/taskService";
 import { TaskDetail } from "./components/TaskDetail";
 import { getStatusIconConfig, TaskStatus } from "./constants/status";
 import { getPriorityColor, getPriorityLabel, getPriorityIcon } from "./constants/priority";
@@ -35,11 +35,20 @@ export default function Command() {
     } catch (error) {
       console.error("Error fetching tasks:", error);
 
-      showToast({
-        style: Toast.Style.Failure,
-        title: t("taskList.failedToFetchTasks"),
-        message: error instanceof Error ? error.message : t("errors.unknownError"),
-      });
+      // 检查是否是会话过期错误
+      if (error instanceof SessionExpiredError) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: t("errors.sessionExpired"),
+          message: t("errors.sessionExpiredDescription"),
+        });
+      } else {
+        showToast({
+          style: Toast.Style.Failure,
+          title: t("taskList.failedToFetchTasks"),
+          message: error instanceof Error ? error.message : t("errors.unknownError"),
+        });
+      }
     } finally {
       setIsLoading(false);
     }

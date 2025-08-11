@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { Task } from "../types/task";
 import { TeamMember } from "../types/teamMember";
-import { finishTask, FinishTaskParams, fetchTaskFormDetails } from "../utils/taskService";
+import { finishTask, FinishTaskParams, fetchTaskFormDetails, SessionExpiredError } from "../utils/taskService";
 import dayjs from "dayjs";
 import { useT } from "../hooks/useT";
 
@@ -98,11 +98,21 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
       popToRoot();
     } catch (error) {
       console.error("Error finishing task:", error);
-      showToast({
-        style: Toast.Style.Failure,
-        title: t("taskCompletion.taskCompletionFailedTitle"),
-        message: error instanceof Error ? error.message : t("errors.unknownError"),
-      });
+
+      // 检查是否是会话过期错误
+      if (error instanceof SessionExpiredError) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: t("errors.sessionExpired"),
+          message: t("errors.sessionExpiredDescription"),
+        });
+      } else {
+        showToast({
+          style: Toast.Style.Failure,
+          title: t("taskCompletion.taskCompletionFailedTitle"),
+          message: error instanceof Error ? error.message : t("errors.unknownError"),
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -122,11 +132,21 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
         }
       } catch (error) {
         console.error("Failed to load form details:", error);
-        showToast({
-          style: Toast.Style.Failure,
-          title: t("errors.loadFormDetailsError"),
-          message: String(error),
-        });
+
+        // 检查是否是会话过期错误
+        if (error instanceof SessionExpiredError) {
+          showToast({
+            style: Toast.Style.Failure,
+            title: t("errors.sessionExpired"),
+            message: t("errors.sessionExpiredDescription"),
+          });
+        } else {
+          showToast({
+            style: Toast.Style.Failure,
+            title: t("errors.loadFormDetailsError"),
+            message: String(error),
+          });
+        }
       }
     };
 

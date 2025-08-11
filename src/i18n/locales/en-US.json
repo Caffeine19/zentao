@@ -86,6 +86,8 @@
   },
   "errors": {
     "loadFormDetailsError": "Failed to load form details",
-    "unknownError": "Unknown error"
+    "unknownError": "Unknown error",
+    "sessionExpired": "Login session expired",
+    "sessionExpiredDescription": "Please check if the Zentao session ID (zentaoSid) is correct, or log in to Zentao system again"
   }
 }

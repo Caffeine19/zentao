@@ -9,6 +9,34 @@ import { TaskStatus } from "../constants/status";
 import { TaskPriority } from "../constants/priority";
 
 /**
+ * 会话过期异常类
+ */
+export class SessionExpiredError extends Error {
+  constructor(message = "登录会话已过期，请重新登录") {
+    super(message);
+    this.name = "SessionExpiredError";
+  }
+}
+
+/**
+ * 检查 HTML 响应是否表示会话已过期
+ * @param html - 从禅道系统获取的 HTML 内容
+ * @returns 如果会话已过期返回 true，否则返回 false
+ */
+export function isSessionExpired(html: string): boolean {
+  // 检查是否包含重定向到登录页面的脚本
+  // 过期的会话会返回类似: self.location = '/user-login-XXXXX.html';
+  const loginRedirectPattern = /self\.location\s*=\s*['"](.*user-login.*\.html)['"]/;
+  const hasLoginRedirect = loginRedirectPattern.test(html);
+
+  // 也可以检查其他会话过期的标识
+  const hasLoginForm = html.includes("<form") && html.includes("user-login");
+  const isLoginPage = html.includes("user-login") && html.length < 1000; // 登录页面通常很短
+
+  return hasLoginRedirect || hasLoginForm || isLoginPage;
+}
+
+/**
  * 从 HTML 页面解析任务信息
  * @param html - 从禅道系统获取的 HTML 页面内容
  */
@@ -135,6 +163,12 @@ export async function fetchTaskFormDetails(taskId: string): Promise<TaskFormDeta
 
     const html = await response.text();
 
+    // 检查会话是否已过期
+    if (isSessionExpired(html)) {
+      console.log("🚀 ~ Session expired detected in task form");
+      throw new SessionExpiredError();
+    }
+
     // 保存 HTML 到日志文件用于调试
     const logDir = path.join(__dirname, "../../log");
     if (!fs.existsSync(logDir)) {
@@ -226,6 +260,12 @@ export async function fetchTasksFromZentao(): Promise<Task[]> {
 
   const html = await response.text();
   console.log("🚀 ~ HTML content length:", html.length);
+
+  // 检查会话是否已过期
+  if (isSessionExpired(html)) {
+    console.log("🚀 ~ Session expired detected");
+    throw new SessionExpiredError();
+  }
 
   // 将 HTML 内容保存到文件以便检查
   const logDir = path.join(__dirname);
