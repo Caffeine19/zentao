@@ -12,7 +12,9 @@
     "noTasksDescription": "您没有分配的任务或获取任务时出现问题。",
     "connectedToZentao": "已连接到禅道",
     "foundTasks": "找到 {{count}} 个任务",
-    "failedToFetchTasks": "获取任务失败"
+    "failedToFetchTasks": "获取任务失败",
+    "filterByProject": "按项目筛选",
+    "allProjects": "所有项目"
   },
   "taskActions": {
     "viewTaskDetails": "查看任务详情",

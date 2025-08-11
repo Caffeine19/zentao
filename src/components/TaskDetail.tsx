@@ -16,12 +16,11 @@ export function TaskDetail({ task }: TaskDetailProps) {
   const { t } = useT();
 
   const markdown = /* md */ `
-# ${task.title}
+##   ${task.title}
 
-## ⏱️ ${t("taskDetails.estimatedTime")}
-- **📅 ${t("taskDetails.estimatedTime")}**: ${task.estimate || t("taskDetails.notSet")}
-- **⚡ ${t("taskDetails.consumedTime")}**: ${task.consumed || "0"}
-- **⏳ ${t("taskDetails.remainingTime")}**: ${task.left || t("taskDetails.notCalculated")}
+| 🕰️ ${t("taskDetails.estimatedTime")} | ⚡ ${t("taskDetails.consumedTime")} | ⏳ ${t("taskDetails.remainingTime")} |
+|:--:|:--:|:--:|
+| ${task.estimate || t("taskDetails.notSet")} | ${task.consumed || "0"} | ${task.left || t("taskDetails.notCalculated")} |
 `;
 
   return (

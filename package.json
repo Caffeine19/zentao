@@ -66,6 +66,7 @@
     "cheerio": "^1.1.2",
     "dayjs": "^1.11.13",
     "i18next": "^25.3.2",
+    "radash": "^12.1.1",
     "react-hook-form": "^7.53.0",
     "react-i18next": "^15.6.1"
   },

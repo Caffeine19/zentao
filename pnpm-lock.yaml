@@ -23,6 +23,9 @@ importers:
       i18next:
         specifier: ^25.3.2
         version: 25.3.2(typescript@5.9.2)
+      radash:
+        specifier: ^12.1.1
+        version: 12.1.1
       react-hook-form:
         specifier: ^7.53.0
         version: 7.62.0(react@19.0.0)
@@ -1036,6 +1039,10 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  radash@12.1.1:
+    resolution: {integrity: sha512-h36JMxKRqrAxVD8201FrCpyeNuUY9Y5zZwujr20fFO77tpUtGa6EZzfKw/3WaiBX95fq7+MpsuMLNdSnORAwSA==}
+    engines: {node: '>=14.18.0'}
 
   react-hook-form@7.62.0:
     resolution: {integrity: sha512-7KWFejc98xqG/F4bAxpL41NB3o1nnvQO1RWZT3TqRZYL8RryQETGfEdVnJN2fy1crCiBLLjkRBVK05j24FxJGA==}
@@ -2201,6 +2208,8 @@ snapshots:
   punycode@2.3.1: {}
 
   queue-microtask@1.2.3: {}
+
+  radash@12.1.1: {}
 
   react-hook-form@7.62.0(react@19.0.0):
     dependencies:

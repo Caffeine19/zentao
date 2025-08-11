@@ -12,7 +12,9 @@
     "noTasksDescription": "Either you have no tasks assigned or there was an issue fetching them.",
     "connectedToZentao": "Connected to Zentao",
     "foundTasks": "Found {{count}} tasks",
-    "failedToFetchTasks": "Failed to fetch tasks"
+    "failedToFetchTasks": "Failed to fetch tasks",
+    "filterByProject": "Filter by Project",
+    "allProjects": "All Projects"
   },
   "taskActions": {
     "viewTaskDetails": "View Task Details",

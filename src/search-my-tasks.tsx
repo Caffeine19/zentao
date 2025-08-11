@@ -1,6 +1,7 @@
 import { ActionPanel, List, Action, Icon, showToast, Toast, getPreferenceValues } from "@raycast/api";
 import { useEffect, useState, useMemo } from "react";
 import dayjs from "dayjs";
+import { unique, alphabetical, sift } from "radash";
 import { Task } from "./types/task";
 import { fetchTasksFromZentao, SessionExpiredError } from "./utils/taskService";
 import { TaskDetail } from "./components/TaskDetail";
@@ -18,6 +19,7 @@ export default function Command() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState<SortOrder>("none");
+  const [selectedProject, setSelectedProject] = useState<string>("all");
 
   const fetchTasks = async () => {
     try {
@@ -58,11 +60,28 @@ export default function Command() {
     fetchTasks();
   }, []);
 
+  // 获取所有唯一的项目列表
+  const uniqueProjects = useMemo(() => {
+    // 使用 radash 的 sift 过滤掉空值，unique 去重，alphabetical 排序
+    const projects = sift(tasks.map((task) => task.project));
+    const uniqueProjectList = unique(projects, (project) => project);
+    return alphabetical(uniqueProjectList, (project) => project);
+  }, [tasks]);
+
+  // 根据项目筛选任务
+  const filteredTasks = useMemo(() => {
+    if (selectedProject === "all") {
+      return tasks;
+    }
+    return tasks.filter((task) => task.project === selectedProject);
+  }, [tasks, selectedProject]);
+
   // Sort tasks based on current sort order
   const sortedTasks = useMemo(() => {
-    if (sortOrder === "none") return tasks;
+    const tasksToSort = filteredTasks;
+    if (sortOrder === "none") return tasksToSort;
 
-    const sorted = [...tasks].sort((a, b) => {
+    const sorted = [...tasksToSort].sort((a, b) => {
       if (sortOrder.startsWith("date")) {
         const dateA = dayjs(a.deadline);
         const dateB = dayjs(b.deadline);
@@ -112,7 +131,7 @@ export default function Command() {
     });
 
     return sorted;
-  }, [tasks, sortOrder]);
+  }, [filteredTasks, sortOrder]);
 
   if (isLoading) {
     return <List isLoading={true} searchBarPlaceholder={t("general.loading")} />;
@@ -124,9 +143,29 @@ export default function Command() {
       searchBarPlaceholder={t("taskList.searchPlaceholder")}
       filtering={true}
       navigationTitle={t("taskList.myTasks")}
+      searchBarAccessory={
+        <List.Dropdown
+          tooltip={t("taskList.filterByProject")}
+          storeValue={true}
+          onChange={(newValue) => {
+            setSelectedProject(newValue);
+          }}
+        >
+          <List.Dropdown.Item title={t("taskList.allProjects")} value="all" />
+          {uniqueProjects.map((project) => (
+            <List.Dropdown.Item key={project} title={project} value={project} />
+          ))}
+        </List.Dropdown>
+      }
       actions={
         <ActionPanel>
           <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
+          <ActionPanel.Section title={t("taskList.filterByProject")}>
+            <Action title={t("taskList.allProjects")} onAction={() => setSelectedProject("all")} icon={Icon.Circle} />
+            {uniqueProjects.slice(0, 5).map((project) => (
+              <Action key={project} title={project} onAction={() => setSelectedProject(project)} icon={Icon.Folder} />
+            ))}
+          </ActionPanel.Section>
           <ActionPanel.Section title={t("sortActions.sortByDate")}>
             <Action
               title={t("sortActions.sortByDateEarliestFirst")}
@@ -234,6 +273,21 @@ export default function Command() {
                   />
                   <Action.CopyToClipboard title={t("taskActions.copyTaskId")} content={task.id} icon={Icon.Clipboard} />
                   <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
+                  <ActionPanel.Section title={t("taskList.filterByProject")}>
+                    <Action
+                      title={t("taskList.allProjects")}
+                      onAction={() => setSelectedProject("all")}
+                      icon={Icon.Circle}
+                    />
+                    {uniqueProjects.slice(0, 5).map((project) => (
+                      <Action
+                        key={project}
+                        title={project}
+                        onAction={() => setSelectedProject(project)}
+                        icon={Icon.Folder}
+                      />
+                    ))}
+                  </ActionPanel.Section>
                   <ActionPanel.Section title={t("sortActions.sortByDate")}>
                     <Action
                       title={t("sortActions.sortByDateEarliestFirst")}
