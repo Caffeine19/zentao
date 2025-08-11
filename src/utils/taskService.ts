@@ -112,9 +112,6 @@ export function parseTasksFromHtml(html: string): Task[] {
 }
 
 /**
- * 从禅道系统获取我的任务列表
- */
-/**
  * 获取任务完成表单详情，包括团队成员列表
  * @param taskId - 任务ID
  */

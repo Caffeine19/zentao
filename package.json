@@ -3,7 +3,7 @@
   "name": "zentao",
   "title": "Zentao",
   "description": "Raycast Extension for Zentao",
-  "icon": "extension-icon.png",
+  "icon": "extension-icon-v2.png",
   "author": "CaffeineCat",
   "owner": "caffeinecat26",
   "license": "MIT",
@@ -65,7 +65,9 @@
     "@raycast/utils": "^1.17.0",
     "cheerio": "^1.1.2",
     "dayjs": "^1.11.13",
-    "react-hook-form": "^7.53.0"
+    "i18next": "^25.3.2",
+    "react-hook-form": "^7.53.0",
+    "react-i18next": "^15.6.1"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",

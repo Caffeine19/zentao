@@ -1,40 +1,171 @@
-# AI guide for this repo (Zentao Raycast Extension)
+# ## Development Guidelines
 
-Be productive quickly with these repo-specific rules. Follow existing patterns and verify behavior in Raycast.
+- **Always use todos tool**: Use the `manage_todo_list` tool for complex multi-step work to track progress and ensure task visibility throughout the coding session.
 
-## What this is
-- A Raycast extension to list and complete Zentao tasks.
-- The “manifest” is `package.json` (commands, preferences, metadata).
+- **Language**: Write comments in Chinese to match the project's target audience and existing codebase
 
-## Dev flows
-- Dev: `npm run dev` (Raycast Develop).
-- Build: `npm run build`.
-- Lint: `npm run lint` or `npm run fix-lint` (extends `@raycast/eslint-config`).
-- Publish to Raycast Store: `npm run publish` (do not publish to npm).
+- **JSDoc**: Use JSDoc comments for functions, interfaces, and complex logic when necessary
 
-## Architecture
-- Entry command: `src/search-my-tasks.tsx` → reads `Preferences`, loads tasks via `fetchTasksFromZentao()`, renders a `List` with sort actions and pushes `TaskDetail`.
-- Detail: `src/components/TaskDetail.tsx` → shows tags (status, priority), links to Zentao, can push `FinishTaskForm` if not done/closed.
-- Finish: `src/components/FinishTaskForm.tsx` → `react-hook-form`; preloads `uid` + members via `fetchTaskFormDetails(task.id)`; submits via `finishTask(params)`.
-- Networking & parsing: `src/utils/taskService.ts` (single source for HTTP + Cheerio parsing).
-  - Task list parsing (`parseTasksFromHtml`): selectors like `.c-name a`, `.c-status .status-task`, `.c-project a`, `.c-hours`.
-  - Finish form parsing (`parseTaskFormDetails`): `#assignedTo option` and script var `kuid` → `uid`.
-  - Finish submit (`finishTask`): POST `FormData` to `task-finish-<id>.html?onlybody=yes`; success iff body includes `parent.parent.location.reload()`; `alert('...')` indicates server error.
-  - Debug logs: HTML/response written under `log/` (and `my-task.html` near build output from `__dirname`).
+- **Date Handling**: Use `dayjs` instead of `new Date()` for all date operations
+  ```typescript
+  // ✅ 正确示例
+  import dayjs from 'dayjs';
+  
+  const formattedDate = dayjs().format('YYYY-MM-DD');
+  const isToday = dayjs(taskDate).isSame(dayjs(), 'day');
+  
+  // ❌ 错误示例
+  const formattedDate = new Date().toISOString().split('T')[0];
+  const isToday = new Date(taskDate).toDateString() === new Date().toDateString();
+  ```o Raycast Extension Copilot Instructions
 
-## Models, visuals, i18n
-- Types in `src/types/*`. `Task` ties to `TaskStatus` / `TaskPriority` in `src/constants/*` (priority values are strings "1".."4", smaller=high).
-- Use helpers for visuals: `getStatusIconConfig`, `getStatusLabel`, `getPriorityIcon`, `getPriorityColor`, `getPriorityLabel`; colors from `TAILWIND_COLORS`.
-- i18n via `src/utils/i18n.ts` with `t(key, replacements?)`; language from preferences (`language`), cache reset with `resetLanguageCache()`.
+## Development Guidelines
 
-## Adding features (do it this way)
-- New command: create `src/<name>.tsx` (default export component) and register under `package.json > commands`.
-- New scraping: add a `parse*FromHtml()` in `taskService.ts` and keep UI dumb (no DOM knowledge in components).
-- Dates/sorting: use `dayjs`; provide valid strings (e.g., `YYYY-MM-DD HH:mm`).
+- **Always use todos tool**: Use the `todos` tool for complex multi-step work to track progress and ensure task visibility throughout the coding session.
 
-## Integration gotchas
-- Always send cookie `zentaosid` and `za=<username>` (see headers in `taskService`).
-- Treat HTTP 200 without `parent.parent.location.reload()` as failure for finish.
-- Large logs shouldn’t ship to the Store.
+- **Language**: Write comments in Chinese to match the project's target audience and existing codebase
+  ```typescript
+  // ✅ 正确示例
+  /**
+   * 解析Zentao任务页面HTML
+   * @param html - 从Zentao获取的HTML内容
+   * @returns 解析后的任务列表
+   */
+  function parseTasksFromHTML(html: string): Task[] {
+    // 使用Cheerio解析HTML结构
+    const $ = cheerio.load(html);
+    // ...
+  }
+  
+  // ❌ 错误示例
+  /**
+   * Parse Zentao task page HTML
+   * @param html - HTML content from Zentao
+   * @returns Parsed task list
+   */
+  ```
 
-Questions or divergences (selectors, status texts, logging paths)? Ask to refine this doc.
+- **JSDoc**: Use JSDoc comments for functions, interfaces, and complex logic when necessary
+  ```typescript
+  /**
+   * 完成指定任务
+   * @param taskId - 任务ID
+   * @param formData - 完成任务的表单数据
+   * @param options - 可选配置参数
+   * @returns Promise<boolean> - 操作是否成功
+   */
+  async function finishTask(
+    taskId: Task['id'], 
+    formData: TaskFormData,
+    options?: { assignToNext?: string }
+  ): Promise<boolean> {
+    // 实现逻辑...
+  }
+  ```
+
+## Architecture Overview
+
+This is a **Raycast extension** for Zentao project management system integration. The architecture follows Raycast's conventions with React + TypeScript, focusing on task management and completion workflows.
+
+### Key Components & Data Flow
+- **Main Command**: `search-my-tasks.tsx` - List view with sorting, filtering, and task actions
+- **Task Service**: `utils/taskService.ts` - Handles all Zentao API communication via HTML scraping
+- **Components**: `TaskDetail.tsx` (read-only view) + `FinishTaskForm.tsx` (task completion)
+- **Data Flow**: Zentao HTML → Cheerio parsing → TypeScript interfaces → Raycast UI
+
+### Zentao Integration Pattern
+**Critical**: This extension works by scraping Zentao's HTML pages, not REST APIs. Authentication uses session cookies (`zentaosid`).
+
+```typescript
+// Pattern: All Zentao requests include these headers
+headers: {
+  Cookie: `zentaosid=${zentaoSid}; lang=zh-cn; device=desktop; theme=default; keepLogin=on; za=${username}`,
+  "User-Agent": "Mozilla/5.0...", // Required for proper HTML rendering
+}
+```
+
+## Development Patterns
+
+### I18n Implementation
+Uses custom i18n system (not react-i18next despite dependency). **Key pattern**:
+- All user-facing strings use `t()` function from `utils/i18n.ts`
+- Language detection from user preferences: `"zh-CN" | "en-US"`
+- Supports interpolation: `t("foundTasks", { count: tasks.length })`
+
+### Constants Organization
+Enums + utility functions pattern for UI consistency:
+- `constants/status.ts` - TaskStatus enum with colors, icons, labels
+- `constants/priority.ts` - TaskPriority enum (numbers 1-4, lower = higher priority)
+- `constants/colors.ts` - Tailwind color palette for consistent theming
+
+### State Management
+Uses React hooks with specific patterns:
+- `useState` for local component state
+- `useMemo` for expensive sorting operations
+- `useForm` (react-hook-form) for complex forms with validation
+- No global state management - Raycast preferences handle config
+
+### Debugging Zentao Integration
+The extension logs HTML responses to `/log/` directory for debugging:
+- `my-task.html` - Main task list page
+- `task-finish-form.html` - Task completion form
+- `task-finish-response.log` - Form submission responses
+
+**Critical**: When Zentao integration breaks, check these logs first to understand HTML structure changes.
+
+### TypeScript Conventions
+- Strict TypeScript with `isolatedModules: true`
+- Interface-first design - see `types/` directory
+- Raycast API types auto-generated in `raycast-env.d.ts`
+- Preferences typed as global `Preferences` interface
+- **Type References**: Use existing type references like `taskId: Task['id']` instead of primitive types like `taskId: string`
+
+### Code Comments & Documentation
+- **Examples**: See `utils/taskService.ts` for proper Chinese JSDoc documentation patterns
+
+## Zentao-Specific Implementation Details
+
+### Task Parsing Strategy
+HTML parsing uses Cheerio with fallback selectors:
+```typescript
+const taskSelectors = [
+  "tr[data-id]",    // Primary: rows with data-id
+  "tbody tr",       // Fallback: all table rows
+  ".table tr",      // Alternative: table class
+  "#taskTable tr"   // Specific table ID
+];
+```
+
+### Task Completion Workflow
+1. Fetch form details from `/task-finish-{taskId}.html?onlybody=yes`
+2. Parse team members dropdown and extract `uid` from JavaScript
+3. Submit FormData to same URL with all required fields
+4. Check response for success indicators (`parent.parent.location.reload()`)
+
+### Priority Mapping
+Zentao uses numeric priorities (1-4) mapped to semantic labels:
+- `1` → "Critical" (red) 
+- `2` → "High" (amber)
+- `3` → "Medium" (blue)
+- `4` → "Low" (green)
+
+## Error Handling Patterns
+
+### Toast Notifications
+Consistent error feedback using Raycast's toast system:
+```typescript
+showToast({
+  style: Toast.Style.Failure,
+  title: t("failedToFetchTasks"),
+  message: error instanceof Error ? error.message : t("unknownError"),
+});
+```
+
+### Form Validation
+Uses react-hook-form with Raycast form components. Validation errors display inline with form fields.
+
+## Testing & Debugging
+- No automated tests currently - manual testing workflow
+- Use log files in `/log/` directory for debugging Zentao responses
+- Raycast dev console shows network requests and React errors
+- Test with both Chinese and English locales

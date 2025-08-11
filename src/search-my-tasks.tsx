@@ -7,12 +7,13 @@ import { TaskDetail } from "./components/TaskDetail";
 import { getStatusIconConfig, TaskStatus } from "./constants/status";
 import { getPriorityColor, getPriorityLabel, getPriorityIcon } from "./constants/priority";
 import { TAILWIND_COLORS } from "./constants/colors";
-import { t } from "./utils/i18n";
+import { useT } from "./hooks/useT";
 
 type SortOrder = "none" | "date-asc" | "date-desc" | "priority-asc" | "priority-desc" | "status-asc" | "status-desc";
 
 export default function Command() {
   const preferences = getPreferenceValues<Preferences>();
+  const { t } = useT();
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,8 +27,8 @@ export default function Command() {
 
       showToast({
         style: Toast.Style.Success,
-        title: t("connectedToZentao"),
-        message: t("foundTasks", { count: parsedTasks.length }),
+        title: t("taskList.connectedToZentao"),
+        message: t("taskList.foundTasks", { count: parsedTasks.length }),
       });
 
       setTasks(parsedTasks);
@@ -36,8 +37,8 @@ export default function Command() {
 
       showToast({
         style: Toast.Style.Failure,
-        title: t("failedToFetchTasks"),
-        message: error instanceof Error ? error.message : t("unknownError"),
+        title: t("taskList.failedToFetchTasks"),
+        message: error instanceof Error ? error.message : t("errors.unknownError"),
       });
     } finally {
       setIsLoading(false);
@@ -105,67 +106,67 @@ export default function Command() {
   }, [tasks, sortOrder]);
 
   if (isLoading) {
-    return <List isLoading={true} searchBarPlaceholder={t("loading")} />;
+    return <List isLoading={true} searchBarPlaceholder={t("general.loading")} />;
   }
 
   return (
     <List
       isLoading={isLoading}
-      searchBarPlaceholder={t("searchPlaceholder")}
+      searchBarPlaceholder={t("taskList.searchPlaceholder")}
       filtering={true}
-      navigationTitle={t("myTasks")}
+      navigationTitle={t("taskList.myTasks")}
       actions={
         <ActionPanel>
-          <Action title={t("refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
-          <ActionPanel.Section title={t("sortByDate")}>
+          <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
+          <ActionPanel.Section title={t("sortActions.sortByDate")}>
             <Action
-              title={t("sortByDateEarliestFirst")}
+              title={t("sortActions.sortByDateEarliestFirst")}
               onAction={() => setSortOrder("date-asc")}
               icon={Icon.ArrowUp}
             />
             <Action
-              title={t("sortByDateLatestFirst")}
+              title={t("sortActions.sortByDateLatestFirst")}
               onAction={() => setSortOrder("date-desc")}
               icon={Icon.ArrowDown}
             />
           </ActionPanel.Section>
-          <ActionPanel.Section title={t("sortByPriority")}>
+          <ActionPanel.Section title={t("sortActions.sortByPriority")}>
             <Action
-              title={t("sortByPriorityHighToLow")}
+              title={t("sortActions.sortByPriorityHighToLow")}
               onAction={() => setSortOrder("priority-asc")}
               icon={Icon.ArrowUp}
             />
             <Action
-              title={t("sortByPriorityLowToHigh")}
+              title={t("sortActions.sortByPriorityLowToHigh")}
               onAction={() => setSortOrder("priority-desc")}
               icon={Icon.ArrowDown}
             />
           </ActionPanel.Section>
-          <ActionPanel.Section title={t("sortByStatus")}>
+          <ActionPanel.Section title={t("sortActions.sortByStatus")}>
             <Action
-              title={t("sortByStatusActiveFirst")}
+              title={t("sortActions.sortByStatusActiveFirst")}
               onAction={() => setSortOrder("status-asc")}
               icon={Icon.ArrowUp}
             />
             <Action
-              title={t("sortByStatusCompletedFirst")}
+              title={t("sortActions.sortByStatusCompletedFirst")}
               onAction={() => setSortOrder("status-desc")}
               icon={Icon.ArrowDown}
             />
           </ActionPanel.Section>
-          <ActionPanel.Section title={t("resetSort")}>
-            <Action title={t("resetSort")} onAction={() => setSortOrder("none")} icon={Icon.Minus} />
+          <ActionPanel.Section title={t("sortActions.resetSort")}>
+            <Action title={t("sortActions.resetSort")} onAction={() => setSortOrder("none")} icon={Icon.Minus} />
           </ActionPanel.Section>
         </ActionPanel>
       }
     >
       {sortedTasks.length === 0 ? (
         <List.EmptyView
-          title={t("noTasksTitle")}
-          description={t("noTasksDescription")}
+          title={t("taskList.noTasksTitle")}
+          description={t("taskList.noTasksDescription")}
           actions={
             <ActionPanel>
-              <Action title={t("refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
+              <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
             </ActionPanel>
           }
         />
@@ -212,52 +213,60 @@ export default function Command() {
               ]}
               actions={
                 <ActionPanel>
-                  <Action.Push title={t("viewTaskDetails")} target={<TaskDetail task={task} />} icon={Icon.Eye} />
+                  <Action.Push
+                    title={t("taskActions.viewTaskDetails")}
+                    target={<TaskDetail task={task} />}
+                    icon={Icon.Eye}
+                  />
                   <Action.OpenInBrowser
-                    title={t("openInZentao")}
+                    title={t("taskActions.openInZentao")}
                     url={`${preferences.zentaoUrl}/task-view-${task.id}.html`}
                     icon={Icon.Globe}
                   />
-                  <Action.CopyToClipboard title={t("copyTaskId")} content={task.id} icon={Icon.Clipboard} />
-                  <Action title={t("refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
-                  <ActionPanel.Section title={t("sortByDate")}>
+                  <Action.CopyToClipboard title={t("taskActions.copyTaskId")} content={task.id} icon={Icon.Clipboard} />
+                  <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
+                  <ActionPanel.Section title={t("sortActions.sortByDate")}>
                     <Action
-                      title={t("sortByDateEarliestFirst")}
+                      title={t("sortActions.sortByDateEarliestFirst")}
                       onAction={() => setSortOrder("date-asc")}
                       icon={Icon.ArrowUp}
                     />
                     <Action
-                      title={t("sortByDateLatestFirst")}
+                      title={t("sortActions.sortByDateLatestFirst")}
                       onAction={() => setSortOrder("date-desc")}
                       icon={Icon.ArrowDown}
                     />
                   </ActionPanel.Section>
-                  <ActionPanel.Section title={t("sortByPriority")}>
+                  <ActionPanel.Section title={t("sortActions.sortByPriority")}>
                     <Action
-                      title={t("sortByPriorityHighToLow")}
+                      title={t("sortActions.sortByPriorityHighToLow")}
                       onAction={() => setSortOrder("priority-asc")}
                       icon={Icon.ArrowUp}
                     />
                     <Action
-                      title={t("sortByPriorityLowToHigh")}
+                      title={t("sortActions.sortByPriorityLowToHigh")}
                       onAction={() => setSortOrder("priority-desc")}
                       icon={Icon.ArrowDown}
                     />
                   </ActionPanel.Section>
-                  <ActionPanel.Section title={t("sortByStatus")}>
+                  <ActionPanel.Section title={t("sortActions.sortByStatus")}>
                     <Action
-                      title={t("sortByStatusActiveFirst")}
+                      title={t("sortActions.sortByStatusActiveFirst")}
                       onAction={() => setSortOrder("status-asc")}
                       icon={Icon.ArrowUp}
                     />
                     <Action
-                      title={t("sortByStatusCompletedFirst")}
+                      title={t("sortActions.sortByStatusCompletedFirst")}
                       onAction={() => setSortOrder("status-desc")}
                       icon={Icon.ArrowDown}
                     />
                   </ActionPanel.Section>
-                  <ActionPanel.Section title={t("resetSort")}>
-                    <Action title={t("resetSort")} onAction={() => setSortOrder("none")} icon={Icon.Minus} />
+                  <ActionPanel.Section title={t("sortActions.resetSort")}>
+                    <Action
+                      title={t("sortActions.resetSort")}
+                      onAction={() => setSortOrder("none")}
+                      icon={Icon.Minus}
+                    />
                   </ActionPanel.Section>
                 </ActionPanel>
               }

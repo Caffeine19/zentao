@@ -1,0 +1,91 @@
+{
+  "general": {
+    "loading": "Loading...",
+    "refresh": "Refresh",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
+  "taskList": {
+    "searchPlaceholder": "Search tasks by title, status, priority, or assignee...",
+    "myTasks": "My Tasks",
+    "noTasksTitle": "No tasks found",
+    "noTasksDescription": "Either you have no tasks assigned or there was an issue fetching them.",
+    "connectedToZentao": "Connected to Zentao",
+    "foundTasks": "Found {{count}} tasks",
+    "failedToFetchTasks": "Failed to fetch tasks"
+  },
+  "taskActions": {
+    "viewTaskDetails": "View Task Details",
+    "openInZentao": "Open in Zentao",
+    "copyTaskId": "Copy Task ID",
+    "finishTask": "Finish Task"
+  },
+  "sortActions": {
+    "sortByDate": "Sort by Date",
+    "sortByDateEarliestFirst": "Sort by Date (Earliest First)",
+    "sortByDateLatestFirst": "Sort by Date (Latest First)",
+    "sortByPriority": "Sort by Priority",
+    "sortByPriorityHighToLow": "Sort by Priority (High to Low)",
+    "sortByPriorityLowToHigh": "Sort by Priority (Low to High)",
+    "sortByStatus": "Sort by Status",
+    "sortByStatusActiveFirst": "Sort by Status (Active First)",
+    "sortByStatusCompletedFirst": "Sort by Status (Completed First)",
+    "resetSort": "Reset Sort"
+  },
+  "taskForm": {
+    "finishTaskTitle": "Finish Task",
+    "currentConsumedTime": "Current Consumed Time",
+    "currentConsumedTimePlaceholder": "Enter hours consumed for this session",
+    "currentConsumedTimeInfo": "Hours consumed in this work session",
+    "totalConsumedTime": "Total Consumed Time",
+    "totalConsumedTimeCalculation": "{{total}} hours (Auto-calculated: Previous {{previous}} + Current {{current}})",
+    "assignTo": "Assign To",
+    "assignToInfo": "Can reassign the task",
+    "actualStartTime": "Actual Start Time",
+    "actualStartTimeInfo": "When the task actually started",
+    "finishTime": "Finish Time",
+    "finishTimeInfo": "When the task was completed",
+    "comments": "Comments",
+    "commentsPlaceholder": "Enter completion notes (optional)",
+    "commentsInfo": "Add completion notes, issues encountered, or other relevant information"
+  },
+  "taskCompletion": {
+    "taskCompletedSuccessTitle": "Task Completed Successfully",
+    "taskCompletedSuccessMessage": "Task \"{{title}}\" has been marked as completed",
+    "taskCompletionFailedTitle": "Failed to Complete Task"
+  },
+  "taskStatus": {
+    "statusWait": "Waiting",
+    "statusDoing": "In Progress",
+    "statusDone": "Done",
+    "statusPause": "Paused",
+    "statusCancel": "Cancelled",
+    "statusClosed": "Closed"
+  },
+  "priority": {
+    "priorityHigh": "High",
+    "priorityMedium": "Medium",
+    "priorityLow": "Low",
+    "priorityCritical": "Critical"
+  },
+  "taskDetails": {
+    "project": "Project",
+    "currentStatus": "Current Status",
+    "priority": "Priority",
+    "assignedTo": "Assigned To",
+    "deadline": "Deadline",
+    "estimatedTime": "Estimated Time",
+    "consumedTime": "Consumed Time",
+    "remainingTime": "Remaining Time",
+    "taskTitle": "Task",
+    "copyUrl": "Copy Task URL",
+    "copyTitle": "Copy Task Title",
+    "notSet": "Not Set",
+    "notCalculated": "Not Calculated",
+    "notAssigned": "Not Assigned"
+  },
+  "errors": {
+    "loadFormDetailsError": "Failed to load form details",
+    "unknownError": "Unknown error"
+  }
+}

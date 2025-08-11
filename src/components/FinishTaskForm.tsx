@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { Task } from "../types/task";
 import { TeamMember } from "../types/teamMember";
 import { finishTask, FinishTaskParams, fetchTaskFormDetails } from "../utils/taskService";
-import { t } from "../utils/i18n";
 import dayjs from "dayjs";
+import { useT } from "../hooks/useT";
 
 interface FinishTaskFormProps {
   task: Task;
@@ -22,6 +22,7 @@ interface FormValues {
 }
 
 export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
+  const { t } = useT();
   const [isLoading, setIsLoading] = useState(false);
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [formUid, setFormUid] = useState<string>("");
@@ -85,8 +86,8 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
 
       showToast({
         style: Toast.Style.Success,
-        title: t("taskCompletedSuccessTitle"),
-        message: t("taskCompletedSuccessMessage", { title: task.title }),
+        title: t("taskCompletion.taskCompletedSuccessTitle"),
+        message: t("taskCompletion.taskCompletedSuccessMessage", { title: task.title }),
       });
 
       if (onFinished) {
@@ -99,8 +100,8 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
       console.error("Error finishing task:", error);
       showToast({
         style: Toast.Style.Failure,
-        title: t("taskCompletionFailedTitle"),
-        message: error instanceof Error ? error.message : t("unknownError"),
+        title: t("taskCompletion.taskCompletionFailedTitle"),
+        message: error instanceof Error ? error.message : t("errors.unknownError"),
       });
     } finally {
       setIsLoading(false);
@@ -123,7 +124,7 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
         console.error("Failed to load form details:", error);
         showToast({
           style: Toast.Style.Failure,
-          title: t("loadFormDetailsError"),
+          title: t("errors.loadFormDetailsError"),
           message: String(error),
         });
       }
@@ -137,12 +138,12 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
       isLoading={isLoading}
       actions={
         <ActionPanel>
-          <Action title={t("finishTask")} icon={Icon.Checkmark} onAction={handleSubmit(onSubmit)} />
+          <Action title={t("taskActions.finishTask")} icon={Icon.Checkmark} onAction={handleSubmit(onSubmit)} />
         </ActionPanel>
       }
     >
-      <Form.Description title={t("finishTaskTitle")} text={task.title} />
-      <Form.Description title={t("project")} text={task.project} />
+      <Form.Description title={t("taskForm.finishTaskTitle")} text={task.title} />
+      <Form.Description title={t("taskDetails.project")} text={task.project} />
       <Form.Separator />
 
       <Controller
@@ -151,9 +152,9 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
         render={({ field }) => (
           <Form.TextField
             id="currentConsumed"
-            title={t("currentConsumedTime")}
-            placeholder={t("currentConsumedTimePlaceholder")}
-            info={t("currentConsumedTimeInfo")}
+            title={t("taskForm.currentConsumedTime")}
+            placeholder={t("taskForm.currentConsumedTimePlaceholder")}
+            info={t("taskForm.currentConsumedTimeInfo")}
             value={field.value}
             onChange={field.onChange}
             error={errors.currentConsumed?.message}
@@ -162,11 +163,11 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
       />
 
       <Form.Description
-        title={t("totalConsumedTime")}
-        text={t("totalConsumedTimeCalculation", { 
-          total: watch("consumed"), 
-          previous: defaultConsumed, 
-          current: currentConsumed 
+        title={t("taskForm.totalConsumedTime")}
+        text={t("taskForm.totalConsumedTimeCalculation", {
+          total: watch("consumed"),
+          previous: defaultConsumed,
+          current: currentConsumed,
         })}
       />
 
@@ -176,8 +177,8 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
         render={({ field }) => (
           <Form.Dropdown
             id="assignedTo"
-            title={t("assignTo")}
-            info={t("assignToInfo")}
+            title={t("taskForm.assignTo")}
+            info={t("taskForm.assignToInfo")}
             value={field.value}
             onChange={field.onChange}
           >
@@ -196,8 +197,8 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
         render={({ field }) => (
           <Form.DatePicker
             id="realStarted"
-            title={t("actualStartTime")}
-            info={t("actualStartTimeInfo")}
+            title={t("taskForm.actualStartTime")}
+            info={t("taskForm.actualStartTimeInfo")}
             type={Form.DatePicker.Type.DateTime}
             value={field.value ? dayjs(field.value).toDate() : null}
             onChange={(date) => field.onChange(date ? dayjs(date).format("YYYY-MM-DD HH:mm") : "")}
@@ -212,8 +213,8 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
         render={({ field }) => (
           <Form.DatePicker
             id="finishedDate"
-            title={t("finishTime")}
-            info={t("finishTimeInfo")}
+            title={t("taskForm.finishTime")}
+            info={t("taskForm.finishTimeInfo")}
             type={Form.DatePicker.Type.DateTime}
             value={field.value ? dayjs(field.value).toDate() : null}
             onChange={(date) => field.onChange(date ? dayjs(date).format("YYYY-MM-DD HH:mm") : "")}
@@ -230,9 +231,9 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
         render={({ field }) => (
           <Form.TextArea
             id="comment"
-            title={t("comments")}
-            placeholder={t("commentsPlaceholder")}
-            info={t("commentsInfo")}
+            title={t("taskForm.comments")}
+            placeholder={t("taskForm.commentsPlaceholder")}
+            info={t("taskForm.commentsInfo")}
             value={field.value}
             onChange={field.onChange}
             error={errors.comment?.message}

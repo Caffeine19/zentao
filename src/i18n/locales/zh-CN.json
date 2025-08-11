@@ -1,0 +1,91 @@
+{
+  "general": {
+    "loading": "加载中...",
+    "refresh": "刷新",
+    "cancel": "取消",
+    "submit": "提交"
+  },
+  "taskList": {
+    "searchPlaceholder": "按标题、状态、优先级或指派人搜索任务...",
+    "myTasks": "我的任务",
+    "noTasksTitle": "未找到任务",
+    "noTasksDescription": "您没有分配的任务或获取任务时出现问题。",
+    "connectedToZentao": "已连接到禅道",
+    "foundTasks": "找到 {{count}} 个任务",
+    "failedToFetchTasks": "获取任务失败"
+  },
+  "taskActions": {
+    "viewTaskDetails": "查看任务详情",
+    "openInZentao": "在禅道中打开",
+    "copyTaskId": "复制任务ID",
+    "finishTask": "完成任务"
+  },
+  "sortActions": {
+    "sortByDate": "按日期排序",
+    "sortByDateEarliestFirst": "按日期排序（最早优先）",
+    "sortByDateLatestFirst": "按日期排序（最晚优先）",
+    "sortByPriority": "按优先级排序",
+    "sortByPriorityHighToLow": "按优先级排序（高到低）",
+    "sortByPriorityLowToHigh": "按优先级排序（低到高）",
+    "sortByStatus": "按状态排序",
+    "sortByStatusActiveFirst": "按状态排序（活跃优先）",
+    "sortByStatusCompletedFirst": "按状态排序（已完成优先）",
+    "resetSort": "重置排序"
+  },
+  "taskForm": {
+    "finishTaskTitle": "完成任务",
+    "currentConsumedTime": "本次消耗工时",
+    "currentConsumedTimePlaceholder": "输入本次工作消耗的小时数",
+    "currentConsumedTimeInfo": "本次工作会话消耗的工时（小时）",
+    "totalConsumedTime": "总消耗工时",
+    "totalConsumedTimeCalculation": "{{total}} 小时（自动计算：之前 {{previous}} + 本次 {{current}}）",
+    "assignTo": "指派给",
+    "assignToInfo": "可以重新指派任务",
+    "actualStartTime": "实际开始时间",
+    "actualStartTimeInfo": "任务实际开始的时间",
+    "finishTime": "完成时间",
+    "finishTimeInfo": "任务完成的时间",
+    "comments": "备注",
+    "commentsPlaceholder": "输入任务完成的备注信息（可选）",
+    "commentsInfo": "可以添加任务完成的说明、遇到的问题或其他相关信息"
+  },
+  "taskCompletion": {
+    "taskCompletedSuccessTitle": "任务完成成功",
+    "taskCompletedSuccessMessage": "任务 \"{{title}}\" 已标记为完成",
+    "taskCompletionFailedTitle": "完成任务失败"
+  },
+  "taskStatus": {
+    "statusWait": "未开始",
+    "statusDoing": "进行中",
+    "statusDone": "已完成",
+    "statusPause": "已暂停",
+    "statusCancel": "已取消",
+    "statusClosed": "已关闭"
+  },
+  "priority": {
+    "priorityHigh": "高",
+    "priorityMedium": "中",
+    "priorityLow": "低",
+    "priorityCritical": "紧急"
+  },
+  "taskDetails": {
+    "project": "项目",
+    "currentStatus": "当前状态",
+    "priority": "优先级",
+    "assignedTo": "指派人",
+    "deadline": "截止日期",
+    "estimatedTime": "预计工时",
+    "consumedTime": "已消耗",
+    "remainingTime": "剩余工时",
+    "taskTitle": "任务",
+    "copyUrl": "复制任务 URL",
+    "copyTitle": "复制任务标题",
+    "notSet": "未设置",
+    "notCalculated": "未计算",
+    "notAssigned": "未指派"
+  },
+  "errors": {
+    "loadFormDetailsError": "加载表单详情失败",
+    "unknownError": "未知错误"
+  }
+}
