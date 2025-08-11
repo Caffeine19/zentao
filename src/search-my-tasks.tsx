@@ -11,8 +11,9 @@ import { useT } from "./hooks/useT";
 import { Task } from "./types/task";
 import { LoginFailedError, LoginResponseParseError, SessionExpiredError, SessionRefreshError } from "./utils/error";
 import { logger } from "./utils/logger";
+import { reLoginUser } from "./utils/loginService";
 import { slice } from "./utils/slice";
-import { fetchTasksFromZentao, reLoginUser } from "./utils/taskService";
+import { fetchTasksFromZentao } from "./utils/taskService";
 
 type SortOrder = "none" | "date-asc" | "date-desc" | "priority-asc" | "priority-desc" | "status-asc" | "status-desc";
 

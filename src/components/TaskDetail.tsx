@@ -6,7 +6,7 @@ import { TaskStatus } from "../constants/status";
 import { useT } from "../hooks/useT";
 import { Task } from "../types/task";
 import { logger } from "../utils/logger";
-import { reLoginUser } from "../utils/taskService";
+import { reLoginUser } from "../utils/loginService";
 import { FinishTaskForm } from "./FinishTaskForm";
 
 interface TaskDetailProps {

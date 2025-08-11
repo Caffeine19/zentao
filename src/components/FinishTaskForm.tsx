@@ -8,7 +8,8 @@ import { Task } from "../types/task";
 import { TeamMember } from "../types/teamMember";
 import { SessionExpiredError } from "../utils/error";
 import { logger } from "../utils/logger";
-import { fetchTaskFormDetails, finishTask, FinishTaskParams, reLoginUser } from "../utils/taskService";
+import { reLoginUser } from "../utils/loginService";
+import { fetchTaskFormDetails, finishTask, FinishTaskParams } from "../utils/taskService";
 
 interface FinishTaskFormProps {
   task: Task;
