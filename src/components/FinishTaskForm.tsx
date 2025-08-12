@@ -56,7 +56,7 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
       assignedTo: "", // Will be set after loading form details
       realStarted: "",
       finishedDate: now,
-      comment: "",
+      comment: "client: raycast/zentao",
     },
   });
 
