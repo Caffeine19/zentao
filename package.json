@@ -16,6 +16,14 @@
       "description": "Search and view your assigned tasks in Zentao",
       "mode": "view"
     }
+    ,
+    {
+      "name": "search-my-bugs",
+      "title": "Search My Bugs",
+      "subtitle": "Zentao",
+      "description": "Search my bugs",
+      "mode": "view"
+    }
   ],
   "preferences": [
     {
