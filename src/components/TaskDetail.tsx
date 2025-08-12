@@ -93,9 +93,9 @@ export function TaskDetail({ task }: TaskDetailProps) {
 |:--:|:--:|:--:|
 | ${taskDetail.estimate || t("taskDetails.notSet")} | ${taskDetail.consumed || "0"} | ${taskDetail.left || t("taskDetails.notCalculated")} |
 
-| 📅 ${t("taskDetails.estimatedStart")} | 🚀 ${t("taskDetails.actualStart")} |
-|:--:|:--:|
-| ${taskDetail.estimatedStart || t("taskDetails.notSet")} | ${taskDetail.actualStart || t("taskDetails.notStarted")} |
+| 📅 ${t("taskDetails.estimatedStart")} | 🚀 ${t("taskDetails.actualStart")} | ⏰ ${t("taskDetails.deadline")} |
+|:--:|:--:|:--:|
+| ${taskDetail.estimatedStart || t("taskDetails.notSet")} | ${taskDetail.actualStart || t("taskDetails.notStarted")} | ${taskDetail.deadline || t("taskDetails.notSet")} |
 `;
 
   return (
