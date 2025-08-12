@@ -16,11 +16,28 @@
     "filterByProject": "Filter by Project",
     "allProjects": "All Projects"
   },
+  "bugList": {
+    "searchPlaceholder": "Search bugs with fuzzy match & pinyin support (拼音搜索)",
+    "myBugs": "My Bugs",
+    "noBugsTitle": "No bugs found",
+    "noBugsDescription": "Either you have no bugs assigned or there was an issue fetching them.",
+    "connectedToZentao": "Connected to Zentao",
+    "foundBugs": "Found {{count}} bugs",
+    "failedToFetchBugs": "Failed to fetch bugs",
+    "filterByProduct": "Filter by Product",
+    "allProducts": "All Products"
+  },
   "taskActions": {
     "viewTaskDetails": "View Task Details",
     "openInZentao": "Open in Zentao",
     "copyTaskId": "Copy Task ID",
     "finishTask": "Finish Task"
+  },
+  "bugActions": {
+    "viewBugDetails": "View Bug Details",
+    "openInZentao": "Open in Zentao",
+    "copyBugId": "Copy Bug ID",
+    "resolveBug": "Resolve Bug"
   },
   "sortActions": {
     "sortByDate": "Sort by Date",
@@ -32,6 +49,9 @@
     "sortByStatus": "Sort by Status",
     "sortByStatusActiveFirst": "Sort by Status (Active First)",
     "sortByStatusCompletedFirst": "Sort by Status (Completed First)",
+    "sortBySeverity": "Sort by Severity",
+    "sortBySeverityHighToLow": "Sort by Severity (High to Low)",
+    "sortBySeverityLowToHigh": "Sort by Severity (Low to High)",
     "resetSort": "Reset Sort"
   },
   "taskForm": {

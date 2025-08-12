@@ -2,7 +2,7 @@ import { getPreferenceValues } from "@raycast/api";
 import * as cheerio from "cheerio";
 
 import { TaskPriority } from "../constants/priority";
-import { Bug, BugSeverity, BugStatus, BugType, BugResolution } from "../types/bug";
+import { Bug, BugResolution, BugSeverity, BugStatus, BugType } from "../types/bug";
 import { SessionExpiredError } from "./error";
 import { logger } from "./logger";
 import { isSessionExpired } from "./loginService";

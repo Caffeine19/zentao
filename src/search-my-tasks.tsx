@@ -24,7 +24,7 @@ export default function Command() {
   const { t } = useT();
 
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [sortOrder, setSortOrder] = useState<SortOrder>("none");
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");

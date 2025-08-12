@@ -16,11 +16,28 @@
     "filterByProject": "按项目筛选",
     "allProjects": "所有项目"
   },
+  "bugList": {
+    "searchPlaceholder": "按标题、状态、严重程度或指派人搜索Bug...",
+    "myBugs": "我的Bug",
+    "noBugsTitle": "未找到Bug",
+    "noBugsDescription": "您没有分配的Bug或获取Bug时出现问题。",
+    "connectedToZentao": "已连接到禅道",
+    "foundBugs": "找到 {{count}} 个Bug",
+    "failedToFetchBugs": "获取Bug失败",
+    "filterByProduct": "按产品筛选",
+    "allProducts": "所有产品"
+  },
   "taskActions": {
     "viewTaskDetails": "查看任务详情",
     "openInZentao": "在禅道中打开",
     "copyTaskId": "复制任务ID",
     "finishTask": "完成任务"
+  },
+  "bugActions": {
+    "viewBugDetails": "查看Bug详情",
+    "openInZentao": "在禅道中打开",
+    "copyBugId": "复制BugID",
+    "resolveBug": "解决Bug"
   },
   "sortActions": {
     "sortByDate": "按日期排序",
@@ -32,6 +49,9 @@
     "sortByStatus": "按状态排序",
     "sortByStatusActiveFirst": "按状态排序（活跃优先）",
     "sortByStatusCompletedFirst": "按状态排序（已完成优先）",
+    "sortBySeverity": "按严重程度排序",
+    "sortBySeverityHighToLow": "按严重程度排序（高到低）",
+    "sortBySeverityLowToHigh": "按严重程度排序（低到高）",
     "resetSort": "重置排序"
   },
   "taskForm": {
