@@ -136,13 +136,6 @@ export function TaskDetail({ task }: TaskDetailProps) {
 
           <Detail.Metadata.Separator />
 
-          <Detail.Metadata.Label
-            title={t("taskDetails.deadline")}
-            text={taskDetail.deadline || t("errors.unknownError")}
-          />
-
-          <Detail.Metadata.Separator />
-
           <Detail.Metadata.Link
             title={t("taskActions.openInZentao")}
             target={`${preferences.zentaoUrl}/task-view-${taskDetail.id}.html`}
