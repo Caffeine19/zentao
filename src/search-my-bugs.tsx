@@ -3,17 +3,18 @@ import dayjs from "dayjs";
 import { alphabetical, sift, unique } from "radash";
 import { useEffect, useMemo, useState } from "react";
 
+import { BugDetail } from "./components/BugDetail";
+import { SessionRefreshAction } from "./components/SessionRefreshAction";
 import { getBugSeverityColor, getBugSeverityIcon, getBugSeverityLabel } from "./constants/bugSeverity";
 import { getBugStatusIconConfig } from "./constants/bugStatus";
 import { TAILWIND_COLORS } from "./constants/colors";
 import { getPriorityColor, getPriorityIcon, getPriorityLabel } from "./constants/priority";
 import { useT } from "./hooks/useT";
-import { Bug, BugStatus } from "./types/bug";
+import { BugListItem, BugStatus } from "./types/bug";
 import { fetchBugsFromZentao } from "./utils/bugService";
-import { LoginFailedError, LoginResponseParseError, SessionExpiredError, SessionRefreshError } from "./utils/error";
+import { SessionExpiredError } from "./utils/error";
 import { searchBugs } from "./utils/fuseSearch";
 import { logger } from "./utils/logger";
-import { reLoginUser } from "./utils/loginService";
 import { slice } from "./utils/slice";
 
 type SortOrder =
@@ -32,7 +33,7 @@ export default function Command() {
 
   const { t } = useT();
 
-  const [bugs, setBugs] = useState<Bug[]>([]);
+  const [bugs, setBugs] = useState<BugListItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sortOrder, setSortOrder] = useState<SortOrder>("none");
   const [selectedProduct, setSelectedProduct] = useState<string>("all");
@@ -74,45 +75,8 @@ export default function Command() {
   };
 
   const handleRefreshSession = async () => {
-    try {
-      showToast({
-        style: Toast.Style.Animated,
-        title: t("sessionRefresh.refreshingSession"),
-        message: t("sessionRefresh.pleaseWait"),
-      });
-
-      await reLoginUser();
-
-      showToast({
-        style: Toast.Style.Success,
-        title: t("sessionRefresh.sessionRefreshSuccess"),
-        message: t("sessionRefresh.sessionRefreshSuccessDescription"),
-      });
-
-      // 会话刷新成功后，重新获取Bug
-      await fetchBugs();
-    } catch (error) {
-      logger.error("Error during manual session refresh:", error instanceof Error ? error : String(error));
-
-      // 根据不同的错误类型提供更具体的错误信息
-      let errorMessage = t("errors.unknownError");
-
-      if (error instanceof LoginFailedError) {
-        errorMessage = error.message;
-      } else if (error instanceof LoginResponseParseError) {
-        errorMessage = "登录响应解析失败，请检查网络连接";
-      } else if (error instanceof SessionRefreshError) {
-        errorMessage = error.message;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
-      showToast({
-        style: Toast.Style.Failure,
-        title: t("sessionRefresh.sessionRefreshFailed"),
-        message: errorMessage,
-      });
-    }
+    // 会话刷新成功后，重新获取Bug
+    await fetchBugs();
   };
 
   useEffect(() => {
@@ -249,12 +213,7 @@ export default function Command() {
       actions={
         <ActionPanel>
           <Action title={t("general.refresh")} onAction={fetchBugs} icon={Icon.ArrowClockwise} />
-          <Action
-            title={t("sessionRefresh.refreshSession")}
-            onAction={handleRefreshSession}
-            icon={Icon.Key}
-            shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
-          />
+          <SessionRefreshAction onRefreshSuccess={handleRefreshSession} />
           <ActionPanel.Section title={t("sortActions.sortByDate")}>
             <Action
               title={t("sortActions.sortByDateEarliestFirst")}
@@ -316,12 +275,7 @@ export default function Command() {
           actions={
             <ActionPanel>
               <Action title={t("general.refresh")} onAction={fetchBugs} icon={Icon.ArrowClockwise} />
-              <Action
-                title={t("sessionRefresh.refreshSession")}
-                onAction={handleRefreshSession}
-                icon={Icon.Key}
-                shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
-              />
+              <SessionRefreshAction onRefreshSuccess={handleRefreshSession} />
             </ActionPanel>
           }
         />
@@ -367,6 +321,11 @@ export default function Command() {
               ]}
               actions={
                 <ActionPanel>
+                  <Action.Push
+                    title={t("bugActions.viewBugDetails")}
+                    icon={Icon.Eye}
+                    target={<BugDetail bug={bug} />}
+                  />
                   <Action.OpenInBrowser
                     title={t("bugActions.openInZentao")}
                     url={`${preferences.zentaoUrl}/bug-view-${bug.id}.html`}
@@ -374,12 +333,7 @@ export default function Command() {
                   />
                   <Action.CopyToClipboard title={t("bugActions.copyBugId")} content={bug.id} icon={Icon.Clipboard} />
                   <Action title={t("general.refresh")} onAction={fetchBugs} icon={Icon.ArrowClockwise} />
-                  <Action
-                    title={t("sessionRefresh.refreshSession")}
-                    onAction={handleRefreshSession}
-                    icon={Icon.Key}
-                    shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
-                  />
+                  <SessionRefreshAction onRefreshSuccess={handleRefreshSession} />
 
                   <ActionPanel.Section title={t("sortActions.sortByDate")}>
                     <Action

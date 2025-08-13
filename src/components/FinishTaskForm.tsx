@@ -8,8 +8,8 @@ import { Task } from "../types/task";
 import { TeamMember } from "../types/teamMember";
 import { SessionExpiredError } from "../utils/error";
 import { logger } from "../utils/logger";
-import { reLoginUser } from "../utils/loginService";
 import { fetchTaskFormDetails, finishTask, FinishTaskParams } from "../utils/taskService";
+import { SessionRefreshAction } from "./SessionRefreshAction";
 
 interface FinishTaskFormProps {
   task: Task;
@@ -59,6 +59,37 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
       comment: "client: raycast/zentao",
     },
   });
+
+  const loadFormData = async () => {
+    try {
+      const formDetails = await fetchTaskFormDetails(task.id);
+      setMembers(formDetails.members);
+      setFormUid(formDetails.uid);
+
+      const selectedMember = formDetails.members.find((member) => member.selected);
+      if (selectedMember) {
+        // Update the form with the selected member's value instead of the task's assignedTo
+        setValue("assignedTo", selectedMember.value);
+      }
+    } catch (error) {
+      logger.error("Failed to load form details:", error instanceof Error ? error : String(error));
+
+      // 检查是否是会话过期错误
+      if (error instanceof SessionExpiredError) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: t("errors.sessionExpired"),
+          message: t("errors.sessionExpiredAction"),
+        });
+      } else {
+        showToast({
+          style: Toast.Style.Failure,
+          title: t("errors.loadFormDetailsError"),
+          message: String(error),
+        });
+      }
+    }
+  };
 
   // Watch currentConsumed to update total consumed
   const currentConsumed = watch("currentConsumed");
@@ -123,83 +154,10 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
   };
 
   const handleRefreshSession = async () => {
-    try {
-      showToast({
-        style: Toast.Style.Animated,
-        title: t("sessionRefresh.refreshingSession"),
-        message: t("sessionRefresh.pleaseWait"),
-      });
-
-      await reLoginUser();
-
-      showToast({
-        style: Toast.Style.Success,
-        title: t("sessionRefresh.sessionRefreshSuccess"),
-        message: t("sessionRefresh.sessionRefreshSuccessDescription"),
-      });
-
-      // 会话刷新成功后，重新加载表单数据
-      const loadFormData = async () => {
-        try {
-          const formDetails = await fetchTaskFormDetails(task.id);
-          setMembers(formDetails.members);
-          setFormUid(formDetails.uid);
-
-          const selectedMember = formDetails.members.find((member) => member.selected);
-          if (selectedMember) {
-            setValue("assignedTo", selectedMember.value);
-          }
-        } catch (error) {
-          logger.error(
-            "Failed to reload form details after session refresh:",
-            error instanceof Error ? error : String(error),
-          );
-        }
-      };
-
-      await loadFormData();
-    } catch (error) {
-      logger.error("Error during manual session refresh:", error instanceof Error ? error : String(error));
-      showToast({
-        style: Toast.Style.Failure,
-        title: t("sessionRefresh.sessionRefreshFailed"),
-        message: error instanceof Error ? error.message : t("errors.unknownError"),
-      });
-    }
+    await loadFormData();
   };
 
   useEffect(() => {
-    const loadFormData = async () => {
-      try {
-        const formDetails = await fetchTaskFormDetails(task.id);
-        setMembers(formDetails.members);
-        setFormUid(formDetails.uid);
-
-        const selectedMember = formDetails.members.find((member) => member.selected);
-        if (selectedMember) {
-          // Update the form with the selected member's value instead of the task's assignedTo
-          setValue("assignedTo", selectedMember.value);
-        }
-      } catch (error) {
-        logger.error("Failed to load form details:", error instanceof Error ? error : String(error));
-
-        // 检查是否是会话过期错误
-        if (error instanceof SessionExpiredError) {
-          showToast({
-            style: Toast.Style.Failure,
-            title: t("errors.sessionExpired"),
-            message: t("errors.sessionExpiredAction"),
-          });
-        } else {
-          showToast({
-            style: Toast.Style.Failure,
-            title: t("errors.loadFormDetailsError"),
-            message: String(error),
-          });
-        }
-      }
-    };
-
     loadFormData();
   }, [task.id, setValue]);
 
@@ -209,12 +167,7 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
       actions={
         <ActionPanel>
           <Action title={t("taskActions.finishTask")} icon={Icon.Checkmark} onAction={handleSubmit(onSubmit)} />
-          <Action
-            title={t("sessionRefresh.refreshSession")}
-            onAction={handleRefreshSession}
-            icon={Icon.Key}
-            shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
-          />
+          <SessionRefreshAction onRefreshSuccess={handleRefreshSession} />
         </ActionPanel>
       }
     >

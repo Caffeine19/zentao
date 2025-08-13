@@ -1,7 +1,7 @@
 import Fuse from "fuse.js";
 import PinyinMatch from "pinyin-match";
 
-import { Bug } from "../types/bug";
+import { BugListItem } from "../types/bug";
 import { Task } from "../types/task";
 
 /**
@@ -49,7 +49,7 @@ export function searchTasks(tasks: Task[], query: string): Task[] {
  * @param query 搜索关键词
  * @returns 匹配的Bug列表
  */
-export function searchBugs(bugs: Bug[], query: string): Bug[] {
+export function searchBugs(bugs: BugListItem[], query: string): BugListItem[] {
   if (!query.trim() || bugs.length === 0) {
     return bugs;
   }

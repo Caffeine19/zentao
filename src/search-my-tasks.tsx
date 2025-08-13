@@ -3,16 +3,16 @@ import dayjs from "dayjs";
 import { alphabetical, sift, unique } from "radash";
 import { useEffect, useMemo, useState } from "react";
 
+import { SessionRefreshAction } from "./components/SessionRefreshAction";
 import { TaskDetail } from "./components/TaskDetail";
 import { TAILWIND_COLORS } from "./constants/colors";
 import { getPriorityColor, getPriorityIcon, getPriorityLabel } from "./constants/priority";
 import { getStatusIconConfig, TaskStatus } from "./constants/status";
 import { useT } from "./hooks/useT";
 import { Task } from "./types/task";
-import { LoginFailedError, LoginResponseParseError, SessionExpiredError, SessionRefreshError } from "./utils/error";
+import { SessionExpiredError } from "./utils/error";
 import { searchTasks } from "./utils/fuseSearch";
 import { logger } from "./utils/logger";
-import { reLoginUser } from "./utils/loginService";
 import { slice } from "./utils/slice";
 import { fetchTasksFromZentao } from "./utils/taskService";
 
@@ -65,45 +65,8 @@ export default function Command() {
   };
 
   const handleRefreshSession = async () => {
-    try {
-      showToast({
-        style: Toast.Style.Animated,
-        title: t("sessionRefresh.refreshingSession"),
-        message: t("sessionRefresh.pleaseWait"),
-      });
-
-      await reLoginUser();
-
-      showToast({
-        style: Toast.Style.Success,
-        title: t("sessionRefresh.sessionRefreshSuccess"),
-        message: t("sessionRefresh.sessionRefreshSuccessDescription"),
-      });
-
-      // 会话刷新成功后，重新获取任务
-      await fetchTasks();
-    } catch (error) {
-      logger.error("Error during manual session refresh:", error instanceof Error ? error : String(error));
-
-      // 根据不同的错误类型提供更具体的错误信息
-      let errorMessage = t("errors.unknownError");
-
-      if (error instanceof LoginFailedError) {
-        errorMessage = error.message;
-      } else if (error instanceof LoginResponseParseError) {
-        errorMessage = "登录响应解析失败，请检查网络连接";
-      } else if (error instanceof SessionRefreshError) {
-        errorMessage = error.message;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
-      showToast({
-        style: Toast.Style.Failure,
-        title: t("sessionRefresh.sessionRefreshFailed"),
-        message: errorMessage,
-      });
-    }
+    // 会话刷新成功后，重新获取任务
+    await fetchTasks();
   };
 
   useEffect(() => {
@@ -233,12 +196,7 @@ export default function Command() {
       actions={
         <ActionPanel>
           <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
-          <Action
-            title={t("sessionRefresh.refreshSession")}
-            onAction={handleRefreshSession}
-            icon={Icon.Key}
-            shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
-          />
+          <SessionRefreshAction onRefreshSuccess={handleRefreshSession} />
           <ActionPanel.Section title={t("sortActions.sortByDate")}>
             <Action
               title={t("sortActions.sortByDateEarliestFirst")}
@@ -288,12 +246,7 @@ export default function Command() {
           actions={
             <ActionPanel>
               <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
-              <Action
-                title={t("sessionRefresh.refreshSession")}
-                onAction={handleRefreshSession}
-                icon={Icon.Key}
-                shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
-              />
+              <SessionRefreshAction onRefreshSuccess={handleRefreshSession} />
             </ActionPanel>
           }
         />
@@ -348,12 +301,7 @@ export default function Command() {
                   />
                   <Action.CopyToClipboard title={t("taskActions.copyTaskId")} content={task.id} icon={Icon.Clipboard} />
                   <Action title={t("general.refresh")} onAction={fetchTasks} icon={Icon.ArrowClockwise} />
-                  <Action
-                    title={t("sessionRefresh.refreshSession")}
-                    onAction={handleRefreshSession}
-                    icon={Icon.Key}
-                    shortcut={{ modifiers: ["cmd", "shift"], key: "r" }}
-                  />
+                  <SessionRefreshAction onRefreshSuccess={handleRefreshSession} />
 
                   <ActionPanel.Section title={t("sortActions.sortByDate")}>
                     <Action

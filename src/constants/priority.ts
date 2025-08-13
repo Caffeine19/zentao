@@ -52,17 +52,18 @@ export function getPriorityColor(priority: TaskPriority): string {
 }
 
 /**
+ * 优先级图标映射
+ */
+export const PRIORITY_ICONS = {
+  [TaskPriority.CRITICAL]: Icon.StackedBars4, // 紧急 - 4层堆叠条
+  [TaskPriority.HIGH]: Icon.StackedBars3, // 重要 - 3层堆叠条
+  [TaskPriority.MEDIUM]: Icon.StackedBars2, // 一般 - 2层堆叠条
+  [TaskPriority.LOW]: Icon.StackedBars1, // 低优先级 - 1层堆叠条
+} as const;
+
+/**
  * 根据优先级获取图标
  */
 export function getPriorityIcon(priority: TaskPriority): Icon {
-  switch (priority) {
-    case TaskPriority.CRITICAL:
-      return Icon.StackedBars4;
-    case TaskPriority.HIGH:
-      return Icon.StackedBars3;
-    case TaskPriority.MEDIUM:
-      return Icon.StackedBars2;
-    case TaskPriority.LOW:
-      return Icon.StackedBars1;
-  }
+  return PRIORITY_ICONS[priority] || Icon.StackedBars1;
 }

@@ -77,9 +77,9 @@ export enum BugResolution {
 }
 
 /**
- * 禅道Bug对象
+ * 禅道 Bug 列表项对象
  */
-export interface Bug {
+export interface BugListItem {
   /** Bug ID */
   id: string;
   /** Bug标题 */
@@ -106,4 +106,92 @@ export interface Bug {
   resolvedBy: string;
   /** 解决方案 */
   resolution: BugResolution | "";
+}
+
+/**
+ * 禅道 Bug 详情对象
+ */
+export interface BugDetail {
+  /** Bug ID */
+  id: string;
+  /** Bug标题 */
+  title: string;
+  /** Bug状态 */
+  status: BugStatus;
+  /** 严重程度 */
+  severity: BugSeverity;
+  /** 优先级 */
+  priority: TaskPriority;
+  /** Bug类型 */
+  type: BugType;
+  /** 所属产品 */
+  product: string;
+  /** 所属模块 */
+  module: string;
+  /** 来源用例 */
+  fromCase: string;
+  /** 所属计划 */
+  plan: string;
+  /** 创建者 */
+  openedBy: string;
+  /** 指派给 */
+  assignedTo: string;
+  /** 确认状态 */
+  confirmed: boolean;
+  /** 截止日期 */
+  deadline: string;
+  /** 解决者 */
+  resolvedBy: string;
+  /** 解决方案 */
+  resolution: BugResolution | "";
+  /** 激活次数 */
+  activatedCount: number;
+  /** 激活日期 */
+  activatedDate: string;
+  /** 当前指派信息 */
+  assignedInfo: string;
+  /** 反馈者 */
+  feedbackBy: string;
+  /** 通知邮箱 */
+  notifyEmail: string;
+  /** 操作系统 */
+  os: string;
+  /** 浏览器 */
+  browser: string;
+  /** 关键词 */
+  keywords: string;
+  /** 抄送给 */
+  mailto: string;
+
+  /** 创建时间 */
+  createdDate: string;
+  /** 最后修改时间 */
+  lastEditedDate: string;
+
+  /**
+   * 步骤描述
+   */
+  steps: string;
+  /**
+   * 步骤图片
+   */
+  stepsImages: string[];
+
+  /**
+   * 结果描述
+   */
+  result: string;
+  /**
+   * 结果图片
+   */
+  resultImages: string[];
+
+  /**
+   * 期望描述
+   */
+  expected: string;
+  /**
+   * 期望图片
+   */
+  expectedImages: string[];
 }

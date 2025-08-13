@@ -30,16 +30,16 @@ export function getBugTypeLabel(bugType: BugType): string {
  * Bug类型颜色映射
  */
 export const BUG_TYPE_COLORS = {
-  [BugType.CODE_ERROR]: TAILWIND_COLORS.red[500], // 代码错误 - 红色
-  [BugType.CONFIG]: TAILWIND_COLORS.amber[600], // 配置相关 - 琥珀色
-  [BugType.INSTALL]: TAILWIND_COLORS.amber[500], // 安装部署 - 琥珀色
-  [BugType.SECURITY]: TAILWIND_COLORS.red[600], // 安全相关 - 深红色
+  [BugType.CODE_ERROR]: TAILWIND_COLORS.blue[400], // 代码错误 - 蓝色
+  [BugType.CONFIG]: TAILWIND_COLORS.amber[400], // 配置相关 - 琥珀色
+  [BugType.INSTALL]: TAILWIND_COLORS.amber[400], // 安装部署 - 琥珀色
+  [BugType.SECURITY]: TAILWIND_COLORS.red[400], // 安全相关 - 深红色
   [BugType.PERFORMANCE]: TAILWIND_COLORS.amber[400], // 性能问题 - 亮琥珀色
-  [BugType.STANDARD]: TAILWIND_COLORS.blue[500], // 标准规范 - 蓝色
-  [BugType.TEST_SCRIPT]: TAILWIND_COLORS.blue[600], // 测试脚本 - 深蓝色
+  [BugType.STANDARD]: TAILWIND_COLORS.blue[400], // 标准规范 - 蓝色
+  [BugType.TEST_SCRIPT]: TAILWIND_COLORS.blue[400], // 测试脚本 - 深蓝色
   [BugType.UI_DEFECT]: TAILWIND_COLORS.red[400], // UI缺陷 - 亮红色
-  [BugType.REQUIREMENT]: TAILWIND_COLORS.emerald[500], // 需求 - 翡翠绿
-  [BugType.OTHERS]: TAILWIND_COLORS.gray[500], // 其他 - 灰色
+  [BugType.REQUIREMENT]: TAILWIND_COLORS.emerald[400], // 需求 - 翡翠绿
+  [BugType.OTHERS]: TAILWIND_COLORS.gray[400], // 其他 - 灰色
 } as const;
 
 /**
