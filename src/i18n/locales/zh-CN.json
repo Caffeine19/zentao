@@ -181,6 +181,8 @@
     "copyBugUrl": "复制Bug URL",
     "copyBugTitle": "复制Bug标题",
     "copyInfo": "复制信息",
+    "showMetadata": "显示元数据",
+    "hideMetadata": "隐藏元数据",
     "notSet": "未设置",
     "none": "无",
     "loadingBugDetail": "正在加载Bug详情...",

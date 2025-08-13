@@ -124,7 +124,6 @@ export default function Command() {
         const dateA = dayjs(a.deadline);
         const dateB = dayjs(b.deadline);
 
-        // Handle invalid dates - put them at the end
         if (!dateA.isValid() && !dateB.isValid()) return 0;
         if (!dateA.isValid()) return 1;
         if (!dateB.isValid()) return -1;
@@ -209,63 +208,6 @@ export default function Command() {
             );
           })}
         </List.Dropdown>
-      }
-      actions={
-        <ActionPanel>
-          <Action title={t("general.refresh")} onAction={fetchBugs} icon={Icon.ArrowClockwise} />
-          <SessionRefreshAction onRefreshSuccess={handleRefreshSession} />
-          <ActionPanel.Section title={t("sortActions.sortByDate")}>
-            <Action
-              title={t("sortActions.sortByDateEarliestFirst")}
-              onAction={() => setSortOrder("date-asc")}
-              icon={Icon.ArrowUp}
-            />
-            <Action
-              title={t("sortActions.sortByDateLatestFirst")}
-              onAction={() => setSortOrder("date-desc")}
-              icon={Icon.ArrowDown}
-            />
-          </ActionPanel.Section>
-          <ActionPanel.Section title={t("sortActions.sortByPriority")}>
-            <Action
-              title={t("sortActions.sortByPriorityHighToLow")}
-              onAction={() => setSortOrder("priority-asc")}
-              icon={Icon.ArrowUp}
-            />
-            <Action
-              title={t("sortActions.sortByPriorityLowToHigh")}
-              onAction={() => setSortOrder("priority-desc")}
-              icon={Icon.ArrowDown}
-            />
-          </ActionPanel.Section>
-          <ActionPanel.Section title={t("sortActions.sortBySeverity")}>
-            <Action
-              title={t("sortActions.sortBySeverityHighToLow")}
-              onAction={() => setSortOrder("severity-asc")}
-              icon={Icon.ArrowUp}
-            />
-            <Action
-              title={t("sortActions.sortBySeverityLowToHigh")}
-              onAction={() => setSortOrder("severity-desc")}
-              icon={Icon.ArrowDown}
-            />
-          </ActionPanel.Section>
-          <ActionPanel.Section title={t("sortActions.sortByStatus")}>
-            <Action
-              title={t("sortActions.sortByStatusActiveFirst")}
-              onAction={() => setSortOrder("status-asc")}
-              icon={Icon.ArrowUp}
-            />
-            <Action
-              title={t("sortActions.sortByStatusCompletedFirst")}
-              onAction={() => setSortOrder("status-desc")}
-              icon={Icon.ArrowDown}
-            />
-          </ActionPanel.Section>
-          <ActionPanel.Section title={t("sortActions.resetSort")}>
-            <Action title={t("sortActions.resetSort")} onAction={() => setSortOrder("none")} icon={Icon.Minus} />
-          </ActionPanel.Section>
-        </ActionPanel>
       }
     >
       {sortedBugs.length === 0 ? (

@@ -1,5 +1,5 @@
 - [x] 刷新session
 - [ ] get task detail, and use detail info to auto fill complete task form
 - [x] fuse search and support pinyin
-- [ ] search bugs
+- [x] search bugs
 - [ ] complete bugs

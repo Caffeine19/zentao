@@ -181,6 +181,8 @@
     "copyBugUrl": "Copy Bug URL",
     "copyBugTitle": "Copy Bug Title",
     "copyInfo": "Copy Info",
+    "showMetadata": "Show Metadata",
+    "hideMetadata": "Hide Metadata",
     "notSet": "Not Set",
     "none": "None",
     "loadingBugDetail": "Loading bug details...",

@@ -1,5 +1,5 @@
 import { Action, ActionPanel, Detail, getPreferenceValues, Icon, showToast, Toast } from "@raycast/api";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { getBugSeverityColor, getBugSeverityLabel } from "../constants/bugSeverity";
 import { getBugStatusColor, getBugStatusLabel } from "../constants/bugStatus";
@@ -21,6 +21,27 @@ export function BugDetail({ bug: { id } }: BugDetailProps) {
 
   const [bugDetail, setBugDetail] = useState<BugDetailType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showMetadata, setShowMetadata] = useState(false);
+
+  /**
+   * 使用 useMemo 检查Bug详情中是否包含图片，避免不必要的重新计算
+   */
+  const hasImages = useMemo(() => {
+    if (!bugDetail) return false;
+
+    const hasStepsImages = bugDetail.stepsImages && bugDetail.stepsImages.length > 0;
+    const hasResultImages = bugDetail.resultImages && bugDetail.resultImages.length > 0;
+    const hasExpectedImages = bugDetail.expectedImages && bugDetail.expectedImages.length > 0;
+
+    return hasStepsImages || hasResultImages || hasExpectedImages;
+  }, [bugDetail]);
+
+  /**
+   * 监听图片状态变化，自动设置元数据显示状态
+   */
+  useEffect(() => {
+    setShowMetadata(!hasImages);
+  }, [hasImages]);
 
   /**
    * 获取Bug详细信息
@@ -150,70 +171,72 @@ ${bugDetail.notifyEmail ? `**${t("bugDetails.notifyEmail")}:** ${bugDetail.notif
       markdown={markdown}
       navigationTitle={`${t("bugDetails.bugTitle")} #${id}`}
       metadata={
-        <Detail.Metadata>
-          <Detail.Metadata.Label title={t("bugDetails.bugId")} text={bugDetail?.id} />
+        showMetadata ? (
+          <Detail.Metadata>
+            <Detail.Metadata.Label title={t("bugDetails.bugId")} text={bugDetail?.id} />
 
-          <Detail.Metadata.Separator />
+            <Detail.Metadata.Separator />
 
-          <Detail.Metadata.TagList title={t("bugDetails.currentStatus")}>
-            <Detail.Metadata.TagList.Item
-              text={bugDetail ? getBugStatusLabel(bugDetail.status) : t("general.loading")}
-              color={bugDetail ? getBugStatusColor(bugDetail.status) : undefined}
+            <Detail.Metadata.TagList title={t("bugDetails.currentStatus")}>
+              <Detail.Metadata.TagList.Item
+                text={bugDetail ? getBugStatusLabel(bugDetail.status) : t("general.loading")}
+                color={bugDetail ? getBugStatusColor(bugDetail.status) : undefined}
+              />
+            </Detail.Metadata.TagList>
+
+            {bugDetail && (
+              <>
+                <Detail.Metadata.TagList title={t("bugDetails.severity")}>
+                  <Detail.Metadata.TagList.Item
+                    text={`${getBugSeverityLabel(bugDetail.severity)}(${bugDetail.severity})`}
+                    color={getBugSeverityColor(bugDetail.severity)}
+                  />
+                </Detail.Metadata.TagList>
+
+                <Detail.Metadata.TagList title={t("bugDetails.priority")}>
+                  <Detail.Metadata.TagList.Item
+                    text={`${getPriorityLabel(bugDetail.priority)}(${bugDetail.priority})`}
+                    color={getPriorityColor(bugDetail.priority)}
+                  />
+                </Detail.Metadata.TagList>
+
+                <Detail.Metadata.TagList title={t("bugDetails.bugType")}>
+                  <Detail.Metadata.TagList.Item
+                    text={getBugTypeLabel(bugDetail.type)}
+                    color={getBugTypeColor(bugDetail.type)}
+                  />
+                </Detail.Metadata.TagList>
+              </>
+            )}
+
+            <Detail.Metadata.Separator />
+
+            <Detail.Metadata.Label
+              title={t("bugDetails.product")}
+              text={bugDetail?.product || t("errors.unknownError")}
             />
-          </Detail.Metadata.TagList>
 
-          {bugDetail && (
-            <>
-              <Detail.Metadata.TagList title={t("bugDetails.severity")}>
-                <Detail.Metadata.TagList.Item
-                  text={`${getBugSeverityLabel(bugDetail.severity)}(${bugDetail.severity})`}
-                  color={getBugSeverityColor(bugDetail.severity)}
-                />
-              </Detail.Metadata.TagList>
+            {bugDetail?.assignedTo && (
+              <>
+                <Detail.Metadata.Label title={t("bugDetails.assignedTo")} text={bugDetail.assignedTo} />
+                <Detail.Metadata.Separator />
+              </>
+            )}
 
-              <Detail.Metadata.TagList title={t("bugDetails.priority")}>
-                <Detail.Metadata.TagList.Item
-                  text={`${getPriorityLabel(bugDetail.priority)}(${bugDetail.priority})`}
-                  color={getPriorityColor(bugDetail.priority)}
-                />
-              </Detail.Metadata.TagList>
+            {bugDetail?.deadline && (
+              <>
+                <Detail.Metadata.Label title={t("bugDetails.deadline")} text={bugDetail.deadline} />
+                <Detail.Metadata.Separator />
+              </>
+            )}
 
-              <Detail.Metadata.TagList title={t("bugDetails.bugType")}>
-                <Detail.Metadata.TagList.Item
-                  text={getBugTypeLabel(bugDetail.type)}
-                  color={getBugTypeColor(bugDetail.type)}
-                />
-              </Detail.Metadata.TagList>
-            </>
-          )}
-
-          <Detail.Metadata.Separator />
-
-          <Detail.Metadata.Label
-            title={t("bugDetails.product")}
-            text={bugDetail?.product || t("errors.unknownError")}
-          />
-
-          {bugDetail?.assignedTo && (
-            <>
-              <Detail.Metadata.Label title={t("bugDetails.assignedTo")} text={bugDetail.assignedTo} />
-              <Detail.Metadata.Separator />
-            </>
-          )}
-
-          {bugDetail?.deadline && (
-            <>
-              <Detail.Metadata.Label title={t("bugDetails.deadline")} text={bugDetail.deadline} />
-              <Detail.Metadata.Separator />
-            </>
-          )}
-
-          <Detail.Metadata.Link
-            title={t("bugDetails.openInZentao")}
-            target={`${preferences.zentaoUrl}/bug-view-${id}.html`}
-            text={t("bugDetails.viewBugDetails")}
-          />
-        </Detail.Metadata>
+            <Detail.Metadata.Link
+              title={t("bugDetails.openInZentao")}
+              target={`${preferences.zentaoUrl}/bug-view-${id}.html`}
+              text={t("bugDetails.viewBugDetails")}
+            />
+          </Detail.Metadata>
+        ) : undefined
       }
       actions={
         <ActionPanel>
@@ -221,6 +244,11 @@ ${bugDetail.notifyEmail ? `**${t("bugDetails.notifyEmail")}:** ${bugDetail.notif
             title={t("bugDetails.openInZentao")}
             url={`${preferences.zentaoUrl}/bug-view-${id}.html`}
             icon={Icon.Globe}
+          />
+          <Action
+            title={showMetadata ? t("bugDetails.hideMetadata") : t("bugDetails.showMetadata")}
+            onAction={() => setShowMetadata(!showMetadata)}
+            icon={showMetadata ? Icon.EyeDisabled : Icon.Eye}
           />
           <SessionRefreshAction />
           <ActionPanel.Section title={t("bugDetails.copyInfo")}>
