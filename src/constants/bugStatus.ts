@@ -10,7 +10,7 @@ import { BugStatus } from "../types/bug";
 export function getBugStatusIconConfig(status: BugStatus) {
   switch (status) {
     case BugStatus.ACTIVE:
-      return { source: Icon.ExclamationMark, tintColor: Color.Red };
+      return { source: Icon.Bug, tintColor: Color.SecondaryText };
     case BugStatus.RESOLVED:
       return { source: Icon.CheckCircle, tintColor: Color.Green };
     case BugStatus.CLOSED:

@@ -32,8 +32,6 @@ export enum BugSeverity {
 export enum BugType {
   /** 代码错误 */
   CODE_ERROR = "codeerror",
-  /** 界面优化 */
-  INTERFACE = "interface",
   /** 配置相关 */
   CONFIG = "config",
   /** 安装部署 */
@@ -45,9 +43,11 @@ export enum BugType {
   /** 标准规范 */
   STANDARD = "standard",
   /** 测试脚本 */
-  AUTOMATION = "automation",
-  /** 设计缺陷 */
-  DESIGNDEFECT = "designdefect",
+  TEST_SCRIPT = "testscript",
+  /** UI缺陷 */
+  UI_DEFECT = "uiDefect",
+  /** 需求 */
+  REQUIREMENT = "requirement",
   /** 其他 */
   OTHERS = "others",
 }

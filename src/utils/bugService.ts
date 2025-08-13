@@ -90,9 +90,6 @@ export function parseBugsFromHtml(html: string): Bug[] {
         case "代码错误":
           bugType = BugType.CODE_ERROR;
           break;
-        case "界面优化":
-          bugType = BugType.INTERFACE;
-          break;
         case "配置相关":
           bugType = BugType.CONFIG;
           break;
@@ -109,10 +106,13 @@ export function parseBugsFromHtml(html: string): Bug[] {
           bugType = BugType.STANDARD;
           break;
         case "测试脚本":
-          bugType = BugType.AUTOMATION;
+          bugType = BugType.TEST_SCRIPT;
           break;
-        case "设计缺陷":
-          bugType = BugType.DESIGNDEFECT;
+        case "UI缺陷":
+          bugType = BugType.UI_DEFECT;
+          break;
+        case "需求":
+          bugType = BugType.REQUIREMENT;
           break;
         default:
           bugType = BugType.OTHERS;

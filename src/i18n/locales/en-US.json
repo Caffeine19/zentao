@@ -90,6 +90,40 @@
     "priorityLow": "Low",
     "priorityCritical": "Critical"
   },
+  "bugType": {
+    "codeError": "Code Error",
+    "config": "Configuration",
+    "install": "Installation",
+    "security": "Security",
+    "performance": "Performance",
+    "standard": "Standards",
+    "testScript": "Test Script",
+    "uiDefect": "UI Defect",
+    "requirement": "Requirement",
+    "others": "Others"
+  },
+  "bugSeverity": {
+    "minor": "Minor",
+    "normal": "Normal",
+    "major": "Major",
+    "critical": "Critical"
+  },
+  "bugStatus": {
+    "active": "Active",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  },
+  "bugResolution": {
+    "fixed": "Fixed",
+    "wontfix": "Won't Fix",
+    "external": "External",
+    "duplicate": "Duplicate",
+    "notrepro": "Not Reproducible",
+    "postponed": "Postponed",
+    "bydesign": "By Design",
+    "willnotfix": "Will Not Fix",
+    "tostory": "To Story"
+  },
   "taskDetails": {
     "project": "Project",
     "currentStatus": "Current Status",

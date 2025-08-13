@@ -90,6 +90,40 @@
     "priorityLow": "低",
     "priorityCritical": "紧急"
   },
+  "bugType": {
+    "codeError": "代码错误",
+    "config": "配置相关",
+    "install": "安装部署",
+    "security": "安全相关",
+    "performance": "性能问题",
+    "standard": "标准规范",
+    "testScript": "测试脚本",
+    "uiDefect": "UI缺陷",
+    "requirement": "需求",
+    "others": "其他"
+  },
+  "bugSeverity": {
+    "minor": "轻微",
+    "normal": "一般",
+    "major": "严重",
+    "critical": "关键"
+  },
+  "bugStatus": {
+    "active": "激活",
+    "resolved": "已解决",
+    "closed": "已关闭"
+  },
+  "bugResolution": {
+    "fixed": "已解决",
+    "wontfix": "不予解决",
+    "external": "外部原因",
+    "duplicate": "重复Bug",
+    "notrepro": "无法重现",
+    "postponed": "延期处理",
+    "bydesign": "设计如此",
+    "willnotfix": "无需修复",
+    "tostory": "转为需求"
+  },
   "taskDetails": {
     "project": "项目",
     "currentStatus": "当前状态",
