@@ -27,7 +27,7 @@ export function BugDetail({ bug: { id } }: BugDetailProps) {
    * 使用 useMemo 检查Bug详情中是否包含图片，避免不必要的重新计算
    */
   const hasImages = useMemo(() => {
-    if (!bugDetail) return false;
+    if (!bugDetail) return true;
 
     const hasStepsImages = bugDetail.stepsImages && bugDetail.stepsImages.length > 0;
     const hasResultImages = bugDetail.resultImages && bugDetail.resultImages.length > 0;
@@ -88,16 +88,14 @@ export function BugDetail({ bug: { id } }: BugDetailProps) {
       : /* md */ `
 # ${bugDetail.title}
 
-${
-  bugDetail.steps || bugDetail.result || bugDetail.expected
-    ? `
+${`
 ## ${t("bugDetails.reproductionSteps")}
 
 ${
-  bugDetail.steps
+  bugDetail.steps || (bugDetail.stepsImages && bugDetail.stepsImages.length > 0)
     ? `
 ### ${t("bugDetails.steps")}
-${bugDetail.steps}
+${bugDetail.steps ? bugDetail.steps : ""}
 
 ${
   bugDetail.stepsImages && bugDetail.stepsImages.length > 0
@@ -109,10 +107,10 @@ ${
 }
 
 ${
-  bugDetail.result
+  bugDetail.result || (bugDetail.resultImages && bugDetail.resultImages.length > 0)
     ? `
 ### ${t("bugDetails.result")}
-${bugDetail.result}
+${bugDetail.result ? bugDetail.result : ""}
 
 ${
   bugDetail.resultImages && bugDetail.resultImages.length > 0
@@ -124,10 +122,10 @@ ${
 }
 
 ${
-  bugDetail.expected
+  bugDetail.expected || (bugDetail.expectedImages && bugDetail.expectedImages.length > 0)
     ? `
 ### ${t("bugDetails.expected")}
-${bugDetail.expected}
+${bugDetail.expected ? bugDetail.expected : ""}
 
 ${
   bugDetail.expectedImages && bugDetail.expectedImages.length > 0
@@ -137,9 +135,7 @@ ${
 `
     : ""
 }
-`
-    : ""
-}
+`}
 
 ${
   bugDetail.os || bugDetail.browser
