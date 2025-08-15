@@ -1,9 +1,7 @@
 import { TaskPriority } from "../constants/priority";
 import { TaskStatus } from "../constants/status";
 
-/**
- * 禅道 任务 对象
- */
+/** 禅道 任务 对象 */
 export interface Task {
   /** 任务 ID */
   id: string;

@@ -9,16 +9,11 @@ interface SessionRefreshActionProps {
   onRefreshSuccess?: () => void;
 }
 
-/**
- * 会话刷新操作组件
- * 提供统一的会话刷新功能，包含完整的错误处理和用户反馈
- */
+/** 会话刷新操作组件 提供统一的会话刷新功能，包含完整的错误处理和用户反馈 */
 export function SessionRefreshAction({ onRefreshSuccess }: SessionRefreshActionProps) {
   const { t } = useT();
 
-  /**
-   * 处理会话刷新操作
-   */
+  /** 处理会话刷新操作 */
   const handleRefreshSession = async () => {
     try {
       showToast({

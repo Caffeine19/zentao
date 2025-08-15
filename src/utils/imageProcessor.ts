@@ -4,8 +4,9 @@ import { logger } from "./logger";
 
 /**
  * 将HTTP图片转换为base64数据URL
+ *
  * @param imageUrl - 图片URL
- * @returns base64数据URL或原URL（如果转换失败）
+ * @returns Base64数据URL或原URL（如果转换失败）
  */
 async function convertImageToBase64(imageUrl: string): Promise<string> {
   try {
@@ -48,6 +49,7 @@ async function convertImageToBase64(imageUrl: string): Promise<string> {
 
 /**
  * 批量处理图片，将HTTP图片转换为base64，HTTPS图片保持原样
+ *
  * @param images - 图片URL数组
  * @returns 处理后的图片URL数组
  */

@@ -1,8 +1,6 @@
 import { TeamMember } from "./teamMember";
 
-/**
- * 任务完成表单详情
- */
+/** 任务完成表单详情 */
 export interface TaskFormDetails {
   /** 可选择的团队成员列表 */
   members: TeamMember[];

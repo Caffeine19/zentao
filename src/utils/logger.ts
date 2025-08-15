@@ -1,9 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-/**
- * 日志级别枚举
- */
+/** 日志级别枚举 */
 export enum LogLevel {
   DEBUG = "DEBUG",
   INFO = "INFO",
@@ -11,22 +9,16 @@ export enum LogLevel {
   ERROR = "ERROR",
 }
 
-/**
- * 日志输出接口
- */
+/** 日志输出接口 */
 interface LogOutput {
   console?: boolean;
   file?: string;
 }
 
-/**
- * 可记录的数据类型
- */
+/** 可记录的数据类型 */
 type LogData = string | number | boolean | object | Error | null | undefined;
 
-/**
- * 禅道扩展专用日志工具类
- */
+/** 禅道扩展专用日志工具类 */
 class ZentaoLogger {
   private readonly logDir: string;
 
@@ -36,9 +28,7 @@ class ZentaoLogger {
     this.ensureLogDir();
   }
 
-  /**
-   * 确保日志目录存在
-   */
+  /** 确保日志目录存在 */
   private ensureLogDir(): void {
     if (!fs.existsSync(this.logDir)) {
       fs.mkdirSync(this.logDir, { recursive: true });
@@ -47,6 +37,7 @@ class ZentaoLogger {
 
   /**
    * 格式化日志消息
+   *
    * @param level - 日志级别
    * @param message - 日志消息
    * @param data - 附加数据
@@ -59,6 +50,7 @@ class ZentaoLogger {
 
   /**
    * 输出日志到控制台，使用彩色表情符号
+   *
    * @param level - 日志级别
    * @param message - 日志消息
    * @param data - 附加数据
@@ -101,6 +93,7 @@ class ZentaoLogger {
 
   /**
    * 输出日志到文件
+   *
    * @param fileName - 文件名
    * @param content - 内容
    * @param level - 日志级别（可选，用于格式化）
@@ -125,6 +118,7 @@ class ZentaoLogger {
 
   /**
    * 记录调试信息
+   *
    * @param message - 日志消息
    * @param data - 附加数据
    * @param output - 输出配置
@@ -140,6 +134,7 @@ class ZentaoLogger {
 
   /**
    * 记录信息
+   *
    * @param message - 日志消息
    * @param data - 附加数据
    * @param output - 输出配置
@@ -155,6 +150,7 @@ class ZentaoLogger {
 
   /**
    * 记录警告
+   *
    * @param message - 日志消息
    * @param data - 附加数据
    * @param output - 输出配置
@@ -170,6 +166,7 @@ class ZentaoLogger {
 
   /**
    * 记录错误
+   *
    * @param message - 日志消息
    * @param error - 错误对象或数据
    * @param output - 输出配置
@@ -185,6 +182,7 @@ class ZentaoLogger {
 
   /**
    * 保存API响应到文件（用于调试）
+   *
    * @param fileName - 文件名
    * @param content - 响应内容
    * @param logMessage - 可选的日志消息
@@ -196,9 +194,7 @@ class ZentaoLogger {
     }
   }
 
-  /**
-   * 获取日志目录路径
-   */
+  /** 获取日志目录路径 */
   getLogDir(): string {
     return this.logDir;
   }

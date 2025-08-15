@@ -23,9 +23,7 @@ export function BugDetail({ bug: { id } }: BugDetailProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showMetadata, setShowMetadata] = useState(false);
 
-  /**
-   * 使用 useMemo 检查Bug详情中是否包含图片，避免不必要的重新计算
-   */
+  /** 使用 useMemo 检查Bug详情中是否包含图片，避免不必要的重新计算 */
   const hasImages = useMemo(() => {
     if (!bugDetail) return true;
 
@@ -36,16 +34,12 @@ export function BugDetail({ bug: { id } }: BugDetailProps) {
     return hasStepsImages || hasResultImages || hasExpectedImages;
   }, [bugDetail]);
 
-  /**
-   * 监听图片状态变化，自动设置元数据显示状态
-   */
+  /** 监听图片状态变化，自动设置元数据显示状态 */
   useEffect(() => {
     setShowMetadata(!hasImages);
   }, [hasImages]);
 
-  /**
-   * 获取Bug详细信息
-   */
+  /** 获取Bug详细信息 */
   const loadBugDetail = async () => {
     try {
       setIsLoading(true);

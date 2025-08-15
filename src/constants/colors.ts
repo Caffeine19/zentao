@@ -1,7 +1,4 @@
-/**
- * Tailwind CSS 颜色常量
- * 基于 Tailwind CSS v3 默认调色板
- */
+/** Tailwind CSS 颜色常量 基于 Tailwind CSS v3 默认调色板 */
 
 export const TAILWIND_COLORS = {
   // Gray 系列

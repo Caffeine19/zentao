@@ -22,9 +22,7 @@ export function TaskDetail({ task }: TaskDetailProps) {
   const [taskDetail, setTaskDetail] = useState<Task>(task);
   const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * 获取任务详细信息
-   */
+  /** 获取任务详细信息 */
   const loadTaskDetail = async () => {
     try {
       setIsLoading(true);

@@ -30,6 +30,7 @@ Use JSDoc comments for functions, interfaces, and important type declarations on
 // ✅ Correct usage - Functions
 /**
  * 根据用户ID获取用户信息
+ *
  * @param userId - 用户唯一标识符
  * @param options - 查询选项
  * @returns 用户信息对象
@@ -47,9 +48,7 @@ function getUserById(userId: string, options?: QueryOptions): User {
 }
 
 // ✅ Correct usage - Interfaces
-/**
- * 用户信息接口
- */
+/** 用户信息接口 */
 interface User {
   /** 用户唯一标识符 */
   id: string;
@@ -62,15 +61,11 @@ interface User {
 }
 
 // ✅ Correct usage - Type aliases
-/**
- * 用户状态枚举
- */
+/** 用户状态枚举 */
 type UserStatus = "active" | "inactive" | "pending" | "banned";
 
 // ✅ Correct usage - Important constants
-/**
- * 默认用户配置信息
- */
+/** 默认用户配置信息 */
 const userInfo = {
   defaultRole: "user",
   maxLoginAttempts: 3,

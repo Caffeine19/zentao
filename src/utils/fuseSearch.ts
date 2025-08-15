@@ -6,6 +6,7 @@ import { Task } from "../types/task";
 
 /**
  * 搜索任务，支持模糊搜索和拼音搜索
+ *
  * @param tasks 任务列表
  * @param query 搜索关键词
  * @returns 匹配的任务列表
@@ -45,6 +46,7 @@ export function searchTasks(tasks: Task[], query: string): Task[] {
 
 /**
  * 搜索Bug，支持模糊搜索和拼音搜索
+ *
  * @param bugs Bug列表
  * @param query 搜索关键词
  * @returns 匹配的Bug列表

@@ -8,15 +8,7 @@ import { processImages } from "./imageProcessor";
 import { logger } from "./logger";
 import { isSessionExpired } from "./loginService";
 
-/**
- * 从 HTML 页面解析Bug信息
- * @param html - 从禅道系统获取的 HT  // 获取抄送给
-  const mailto = basicTable.find("th:contains('抄送给')").next("td").text().trim();
-
-  // 获取Bug描述和重现步骤
-  const description = $(".detail-content.article-content").first().html()?.trim() || "";
-  const stepsContainer = $(".detail-content.article-content").eq(1);面内容
- */
+/** 从 HTML 页面解析Bug信息 */
 export function parseBugsFromHtml(html: string): BugListItem[] {
   const bugs: BugListItem[] = [];
 
@@ -209,9 +201,7 @@ export function parseBugsFromHtml(html: string): BugListItem[] {
   return bugs;
 }
 
-/**
- * 从禅道系统获取Bug列表
- */
+/** 从禅道系统获取Bug列表 */
 export async function fetchBugsFromZentao(): Promise<BugListItem[]> {
   const preferences = getPreferenceValues<Preferences>();
   const { zentaoUrl, zentaoSid, username } = preferences;
@@ -260,6 +250,7 @@ export async function fetchBugsFromZentao(): Promise<BugListItem[]> {
 
 /**
  * 从Bug详情页面 HTML 解析Bug信息
+ *
  * @param html - Bug详情页面的 HTML 内容
  * @param bugId - Bug ID
  */
@@ -535,6 +526,7 @@ export async function parseBugDetailFromHtml(html: string, bugId: string): Promi
 
 /**
  * 从禅道系统获取Bug详情
+ *
  * @param bugId - Bug ID
  */
 export async function fetchBugDetail(bugId: string): Promise<BugDetail> {

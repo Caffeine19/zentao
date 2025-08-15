@@ -73,9 +73,7 @@ export default function Command() {
     fetchTasks();
   }, []);
 
-  /**
-   * 项目列表及任务数量
-   */
+  /** 项目列表及任务数量 */
   const projectList = useMemo(() => {
     const projects = sift(tasks.map((task) => task.project));
     const uniqueProjectList = unique(projects, (project) => project);
@@ -88,9 +86,7 @@ export default function Command() {
     }));
   }, [tasks]);
 
-  /**
-   * 根据项目筛选任务
-   */
+  /** 根据项目筛选任务 */
   const filteredTasks = useMemo(() => {
     if (selectedProject === "all") {
       return tasks;
@@ -98,9 +94,7 @@ export default function Command() {
     return tasks.filter((task) => task.project === selectedProject);
   }, [tasks, selectedProject]);
 
-  /**
-   * 根据搜索查询筛选任务（使用 Fuse.js 和拼音搜索）
-   */
+  /** 根据搜索查询筛选任务（使用 Fuse.js 和拼音搜索） */
   const searchedTasks = useMemo(() => {
     return searchTasks(filteredTasks, searchQuery);
   }, [filteredTasks, searchQuery]);

@@ -83,9 +83,7 @@ export default function Command() {
     fetchBugs();
   }, []);
 
-  /**
-   * 产品列表及Bug数量
-   */
+  /** 产品列表及Bug数量 */
   const productList = useMemo(() => {
     const products = sift(bugs.map((bug) => bug.product));
     const uniqueProductList = unique(products, (product) => product);
@@ -98,9 +96,7 @@ export default function Command() {
     }));
   }, [bugs]);
 
-  /**
-   * 根据产品筛选Bug
-   */
+  /** 根据产品筛选Bug */
   const filteredBugs = useMemo(() => {
     if (selectedProduct === "all") {
       return bugs;
@@ -108,9 +104,7 @@ export default function Command() {
     return bugs.filter((bug) => bug.product === selectedProduct);
   }, [bugs, selectedProduct]);
 
-  /**
-   * 根据搜索查询筛选Bug（使用 Fuse.js 和拼音搜索）
-   */
+  /** 根据搜索查询筛选Bug（使用 Fuse.js 和拼音搜索） */
   const searchedBugs = useMemo(() => {
     return searchBugs(filteredBugs, searchQuery);
   }, [filteredBugs, searchQuery]);

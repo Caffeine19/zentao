@@ -5,6 +5,7 @@ import { logger } from "./logger";
 
 /**
  * 检查 HTML 响应是否表示会话已过期
+ *
  * @param html - 从禅道系统获取的 HTML 内容
  * @returns 如果会话已过期返回 true，否则返回 false
  */
@@ -18,6 +19,7 @@ export function isSessionExpired(html: string): boolean {
 
 /**
  * 获取用于登录验证的随机数
+ *
  * @returns Promise<string> - 验证随机数
  */
 export async function refreshRandom(): Promise<string> {
@@ -61,6 +63,7 @@ export async function refreshRandom(): Promise<string> {
 
 /**
  * 重新登录用户以刷新会话
+ *
  * @throws {LoginFailedError} 当登录失败时
  * @throws {LoginResponseParseError} 当响应解析失败时
  * @throws {Error} 当网络请求失败时

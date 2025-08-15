@@ -12,6 +12,7 @@ import { isSessionExpired } from "./loginService";
 
 /**
  * 从 HTML 页面解析任务信息
+ *
  * @param html - 从禅道系统获取的 HTML 页面内容
  */
 export function parseTasksFromHtml(html: string): Task[] {
@@ -117,6 +118,7 @@ export function parseTasksFromHtml(html: string): Task[] {
 
 /**
  * 获取任务完成表单详情，包括团队成员列表
+ *
  * @param taskId - 任务ID
  */
 export async function fetchTaskFormDetails(taskId: string): Promise<TaskFormDetails> {
@@ -157,6 +159,7 @@ export async function fetchTaskFormDetails(taskId: string): Promise<TaskFormDeta
 
 /**
  * 解析任务完成表单的详细信息
+ *
  * @param html - 表单页面的 HTML 内容
  */
 export function parseTaskFormDetails(html: string): TaskFormDetails {
@@ -210,6 +213,7 @@ export function parseTaskFormDetails(html: string): TaskFormDetails {
 
 /**
  * 获取单个任务的详细信息
+ *
  * @param taskId - 任务ID
  */
 export async function fetchTaskDetail(taskId: string): Promise<Task> {
@@ -255,6 +259,7 @@ export async function fetchTaskDetail(taskId: string): Promise<Task> {
 
 /**
  * 从任务详情页面 HTML 解析任务信息
+ *
  * @param html - 任务详情页面的 HTML 内容
  * @param taskId - 任务ID
  */
@@ -378,9 +383,7 @@ export async function fetchTasksFromZentao(): Promise<Task[]> {
   return parsedTasks;
 }
 
-/**
- * 完成任务所需的参数接口
- */
+/** 完成任务所需的参数接口 */
 export interface FinishTaskParams {
   /** 任务ID */
   taskId: Task["id"];
@@ -404,6 +407,7 @@ export interface FinishTaskParams {
 
 /**
  * 完成指定的任务
+ *
  * @param params - 完成任务所需的参数
  */
 export async function finishTask(params: FinishTaskParams): Promise<boolean> {

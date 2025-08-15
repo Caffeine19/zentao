@@ -1,3 +1,3 @@
 # Zentao
 
-Raycast Extension for Zentao(禅道) 
+Raycast Extension for Zentao(禅道)

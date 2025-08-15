@@ -1,15 +1,11 @@
-/**
- * 登录响应结果接口
- */
+/** 登录响应结果接口 */
 export interface LoginResult {
   result: string;
   message?: string;
   locate?: string;
 }
 
-/**
- * 会话过期异常类
- */
+/** 会话过期异常类 */
 export class SessionExpiredError extends Error {
   constructor(message = "登录会话已过期，请重新登录") {
     super(message);
@@ -17,9 +13,7 @@ export class SessionExpiredError extends Error {
   }
 }
 
-/**
- * 登录失败异常类
- */
+/** 登录失败异常类 */
 export class LoginFailedError extends Error {
   public readonly loginResult?: LoginResult;
 
@@ -30,9 +24,7 @@ export class LoginFailedError extends Error {
   }
 }
 
-/**
- * 登录响应解析失败异常类
- */
+/** 登录响应解析失败异常类 */
 export class LoginResponseParseError extends Error {
   public readonly responseText: string;
 
@@ -43,9 +35,7 @@ export class LoginResponseParseError extends Error {
   }
 }
 
-/**
- * 会话刷新异常类
- */
+/** 会话刷新异常类 */
 export class SessionRefreshError extends Error {
   public readonly cause?: Error;
 

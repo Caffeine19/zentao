@@ -21,6 +21,7 @@ export const resources = {
 
 /**
  * 获取当前用户偏好的语言设置
+ *
  * @returns 用户配置的语言代码
  */
 function getUserLanguage(): Language {

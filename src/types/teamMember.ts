@@ -1,6 +1,4 @@
-/**
- * 团队成员信息
- */
+/** 团队成员信息 */
 export interface TeamMember {
   /** 成员的唯一标识值，用于表单提交 */
   value: string;

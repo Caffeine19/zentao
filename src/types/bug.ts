@@ -1,8 +1,6 @@
 import { TaskPriority } from "../constants/priority";
 
-/**
- * Bug状态枚举
- */
+/** Bug状态枚举 */
 export enum BugStatus {
   /** 激活 */
   ACTIVE = "active",
@@ -12,9 +10,7 @@ export enum BugStatus {
   CLOSED = "closed",
 }
 
-/**
- * Bug严重程度枚举
- */
+/** Bug严重程度枚举 */
 export enum BugSeverity {
   /** 轻微 */
   MINOR = "1",
@@ -26,9 +22,7 @@ export enum BugSeverity {
   CRITICAL = "4",
 }
 
-/**
- * Bug类型枚举
- */
+/** Bug类型枚举 */
 export enum BugType {
   /** 代码错误 */
   CODE_ERROR = "codeerror",
@@ -52,9 +46,7 @@ export enum BugType {
   OTHERS = "others",
 }
 
-/**
- * Bug解决方案枚举
- */
+/** Bug解决方案枚举 */
 export enum BugResolution {
   /** 已解决 */
   FIXED = "fixed",
@@ -76,9 +68,7 @@ export enum BugResolution {
   TOSTORY = "tostory",
 }
 
-/**
- * 禅道 Bug 列表项对象
- */
+/** 禅道 Bug 列表项对象 */
 export interface BugListItem {
   /** Bug ID */
   id: string;
@@ -108,9 +98,7 @@ export interface BugListItem {
   resolution: BugResolution | "";
 }
 
-/**
- * 禅道 Bug 详情对象
- */
+/** 禅道 Bug 详情对象 */
 export interface BugDetail {
   /** Bug ID */
   id: string;
@@ -168,30 +156,18 @@ export interface BugDetail {
   /** 最后修改时间 */
   lastEditedDate: string;
 
-  /**
-   * 步骤描述
-   */
+  /** 步骤描述 */
   steps: string;
-  /**
-   * 步骤图片
-   */
+  /** 步骤图片 */
   stepsImages: string[];
 
-  /**
-   * 结果描述
-   */
+  /** 结果描述 */
   result: string;
-  /**
-   * 结果图片
-   */
+  /** 结果图片 */
   resultImages: string[];
 
-  /**
-   * 期望描述
-   */
+  /** 期望描述 */
   expected: string;
-  /**
-   * 期望图片
-   */
+  /** 期望图片 */
   expectedImages: string[];
 }

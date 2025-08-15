@@ -3,9 +3,7 @@ import { Color, Icon } from "@raycast/api";
 import { BugType } from "../types/bug";
 import { TAILWIND_COLORS } from "./colors";
 
-/**
- * Bug类型标签映射
- */
+/** Bug类型标签映射 */
 export const BUG_TYPE_LABELS = {
   [BugType.CODE_ERROR]: "代码错误",
   [BugType.CONFIG]: "配置相关",
@@ -19,16 +17,12 @@ export const BUG_TYPE_LABELS = {
   [BugType.OTHERS]: "其他",
 } as const;
 
-/**
- * 根据Bug类型获取显示标签
- */
+/** 根据Bug类型获取显示标签 */
 export function getBugTypeLabel(bugType: BugType): string {
   return BUG_TYPE_LABELS[bugType] || "未知类型";
 }
 
-/**
- * Bug类型颜色映射
- */
+/** Bug类型颜色映射 */
 export const BUG_TYPE_COLORS = {
   [BugType.CODE_ERROR]: TAILWIND_COLORS.blue[400], // 代码错误 - 蓝色
   [BugType.CONFIG]: TAILWIND_COLORS.amber[400], // 配置相关 - 琥珀色
@@ -42,16 +36,12 @@ export const BUG_TYPE_COLORS = {
   [BugType.OTHERS]: TAILWIND_COLORS.gray[400], // 其他 - 灰色
 } as const;
 
-/**
- * 根据Bug类型获取颜色
- */
+/** 根据Bug类型获取颜色 */
 export function getBugTypeColor(bugType: BugType): string {
   return BUG_TYPE_COLORS[bugType] || TAILWIND_COLORS.gray[500];
 }
 
-/**
- * Bug类型图标映射
- */
+/** Bug类型图标映射 */
 export const BUG_TYPE_ICONS = {
   [BugType.CODE_ERROR]: Icon.Code,
   [BugType.CONFIG]: Icon.Gear,
@@ -65,9 +55,7 @@ export const BUG_TYPE_ICONS = {
   [BugType.OTHERS]: Icon.QuestionMark,
 } as const;
 
-/**
- * Bug类型图标颜色映射
- */
+/** Bug类型图标颜色映射 */
 export const BUG_TYPE_ICON_COLORS = {
   [BugType.CODE_ERROR]: Color.Red,
   [BugType.CONFIG]: Color.Orange,
@@ -81,23 +69,17 @@ export const BUG_TYPE_ICON_COLORS = {
   [BugType.OTHERS]: Color.SecondaryText,
 } as const;
 
-/**
- * 根据Bug类型获取图标
- */
+/** 根据Bug类型获取图标 */
 export function getBugTypeIcon(bugType: BugType): Icon {
   return BUG_TYPE_ICONS[bugType] || Icon.Circle;
 }
 
-/**
- * 根据Bug类型获取图标颜色
- */
+/** 根据Bug类型获取图标颜色 */
 export function getBugTypeIconColor(bugType: BugType): Color {
   return BUG_TYPE_ICON_COLORS[bugType] || Color.SecondaryText;
 }
 
-/**
- * 根据Bug类型获取完整的图标配置（包含图标和颜色）
- */
+/** 根据Bug类型获取完整的图标配置（包含图标和颜色） */
 export function getBugTypeIconConfig(bugType: BugType): { source: Icon; tintColor: Color } {
   return {
     source: getBugTypeIcon(bugType),
