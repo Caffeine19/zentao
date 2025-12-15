@@ -502,64 +502,108 @@ export async function parseBugDetailFromHtml(html: string, bugId: string): Promi
   let expected = "";
   let expectedImages: string[] = [];
 
-  let currentSection = "";
-  let currentText = "";
-  let currentImages: string[] = [];
+  // 检查是否有结构化的stepTitle
+  const hasStructuredSteps = stepsContainer.find(".stepTitle").length > 0;
 
-  // 遍历重现步骤容器中的所有直接子元素
-  stepsContainer.children().each((index, element) => {
-    const $el = $(element);
-    const text = $el.text().trim();
-    console.log("🚀 ~ bugService.ts:432 ~ parseBugDetailFromHtml ~ text:", text);
+  if (hasStructuredSteps) {
+    // 处理结构化的重现步骤（有stepTitle）
+    let currentSection = "";
+    let currentText = "";
+    let currentImages: string[] = [];
 
-    if ($el.hasClass("stepTitle")) {
-      // 保存上一个section的内容
-      if (currentSection) {
-        if (currentSection.includes("步骤")) {
-          steps = currentText.trim();
-          stepsImages = [...currentImages];
-        } else if (currentSection.includes("结果")) {
-          result = currentText.trim();
-          resultImages = [...currentImages];
-        } else if (currentSection.includes("期望")) {
-          expected = currentText.trim();
-          expectedImages = [...currentImages];
+    stepsContainer.children().each((_index, element) => {
+      const $el = $(element);
+      const text = $el.text().trim();
+
+      if ($el.hasClass("stepTitle")) {
+        // 保存上一个section的内容
+        if (currentSection) {
+          if (currentSection.includes("步骤")) {
+            steps = currentText.trim();
+            stepsImages = [...currentImages];
+          } else if (currentSection.includes("结果")) {
+            result = currentText.trim();
+            resultImages = [...currentImages];
+          } else if (currentSection.includes("期望")) {
+            expected = currentText.trim();
+            expectedImages = [...currentImages];
+          }
+        }
+
+        // 开始新的section
+        currentSection = text;
+        currentText = "";
+        currentImages = [];
+      } else if ($el.is("p") && !$el.hasClass("stepTitle") && text) {
+        // 普通文本段落
+        currentText += (currentText ? "\n" : "") + text;
+
+        // 检查段落内是否有图片
+        $el.find("img").each((_imgIndex, img) => {
+          const src = $(img).attr("src");
+          if (src) {
+            const imageUrl = src.startsWith("/") ? `${zentaoUrl}${src}` : src;
+            currentImages.push(imageUrl);
+          }
+        });
+      } else if ($el.is("img")) {
+        // 直接的图片元素
+        const src = $el.attr("src");
+        if (src) {
+          const imageUrl = src.startsWith("/") ? `${zentaoUrl}${src}` : src;
+          currentImages.push(imageUrl);
         }
       }
+    });
 
-      // 开始新的section
-      currentSection = text;
-      currentText = "";
-      currentImages = [];
-    } else if ($el.is("p") && !$el.hasClass("stepTitle") && text) {
-      // 普通文本段落
-      currentText += (currentText ? "\n" : "") + text;
-    } else if ($el.is("img")) {
-      // 图片元素
-      const src = $el.attr("src");
-      if (src) {
-        console.log("🚀 ~ bugService.ts:462 ~ parseBugDetailFromHtml ~ src:", src);
-        // 如果是相对路径，转换为绝对路径
-        const imageUrl = src.startsWith("/") ? `${zentaoUrl}${src}` : src;
-
-        // 直接收集图片URL，稍后批量处理
-        currentImages.push(imageUrl);
+    // 保存最后一个section的内容
+    if (currentSection) {
+      if (currentSection.includes("步骤")) {
+        steps = currentText.trim();
+        stepsImages = [...currentImages];
+      } else if (currentSection.includes("结果")) {
+        result = currentText.trim();
+        resultImages = [...currentImages];
+      } else if (currentSection.includes("期望")) {
+        expected = currentText.trim();
+        expectedImages = [...currentImages];
       }
     }
-  });
+  } else {
+    // 处理简单的重现步骤（无stepTitle，所有内容作为步骤）
+    const textParts: string[] = [];
+    const images: string[] = [];
 
-  // 保存最后一个section的内容
-  if (currentSection) {
-    if (currentSection.includes("步骤")) {
-      steps = currentText.trim();
-      stepsImages = [...currentImages];
-    } else if (currentSection.includes("结果")) {
-      result = currentText.trim();
-      resultImages = [...currentImages];
-    } else if (currentSection.includes("期望")) {
-      expected = currentText.trim();
-      expectedImages = [...currentImages];
-    }
+    stepsContainer.children().each((_index, element) => {
+      const $el = $(element);
+      const text = $el.text().trim();
+
+      if ($el.is("p") && text && text !== "") {
+        // 提取段落文本（排除只有<br/>的段落）
+        textParts.push(text);
+      }
+
+      // 查找段落内的图片
+      $el.find("img").each((_imgIndex, img) => {
+        const src = $(img).attr("src");
+        if (src) {
+          const imageUrl = src.startsWith("/") ? `${zentaoUrl}${src}` : src;
+          images.push(imageUrl);
+        }
+      });
+
+      // 直接的图片元素
+      if ($el.is("img")) {
+        const src = $el.attr("src");
+        if (src) {
+          const imageUrl = src.startsWith("/") ? `${zentaoUrl}${src}` : src;
+          images.push(imageUrl);
+        }
+      }
+    });
+
+    steps = textParts.join("\n");
+    stepsImages = images;
   }
 
   // 处理所有section的图片
