@@ -8,6 +8,81 @@ import { processImages } from "./imageProcessor";
 import { logger } from "./logger";
 import { isSessionExpired } from "./loginService";
 
+/** Bug 列表表格的列类型 */
+type BugColumnType =
+  | "id"
+  | "title"
+  | "severity"
+  | "pri"
+  | "type"
+  | "product"
+  | "openedBy"
+  | "confirm"
+  | "deadline"
+  | "resolvedBy"
+  | "resolution"
+  | "actions";
+
+/** 列 class 名称到列类型的映射 */
+const COLUMN_CLASS_MAP: Record<string, BugColumnType> = {
+  "c-id": "id",
+  "c-severity": "severity",
+  "c-pri": "pri",
+  "c-type": "type",
+  "c-product": "product",
+  "c-user": "openedBy", // 注意：可能有多个 c-user 列（创建者、解决者）
+  "c-confirm": "confirm",
+  "c-date": "deadline",
+  "c-resolution": "resolution",
+  "c-actions": "actions",
+};
+
+/** 从表头构建列索引映射 因为禅道系统允许用户自定义列的顺序和显示，需要动态解析表头 */
+function buildColumnIndexMap($: cheerio.CheerioAPI, tableSelector: string): Map<string, number> {
+  const columnMap = new Map<string, number>();
+  const $headers = $(tableSelector).find("thead th");
+
+  // 用于跟踪 c-user 列的出现次数（第一个是创建者，第二个是解决者）
+  let userColumnCount = 0;
+
+  $headers.each((index, header) => {
+    const $header = $(header);
+    const className = $header.attr("class") || "";
+
+    // 检查每个已知的列 class
+    for (const [classKey, columnType] of Object.entries(COLUMN_CLASS_MAP)) {
+      if (className.includes(classKey)) {
+        // 特殊处理 c-user 列，区分创建者和解决者
+        if (classKey === "c-user") {
+          if (userColumnCount === 0) {
+            columnMap.set("openedBy", index);
+          } else {
+            columnMap.set("resolvedBy", index);
+          }
+          userColumnCount++;
+        }
+        // 特殊处理 c-actions 列（可能有多种形式如 c-actions-5）
+        else if (classKey === "c-actions" || className.includes("c-actions")) {
+          columnMap.set("actions", index);
+        } else {
+          columnMap.set(columnType, index);
+        }
+        break;
+      }
+    }
+
+    // 标题列没有特定 class，通常是第二列且包含 Bug标题 链接
+    // 检查表头文本来识别
+    const headerText = $header.text().trim();
+    if (headerText.includes("Bug标题") || headerText.includes("标题")) {
+      columnMap.set("title", index);
+    }
+  });
+
+  logger.debug("bugService.ts ~ buildColumnIndexMap ~ columnMap:", Object.fromEntries(columnMap));
+  return columnMap;
+}
+
 /** 从 HTML 页面解析Bug信息 */
 export function parseBugsFromHtml(html: string): BugListItem[] {
   const bugs: BugListItem[] = [];
@@ -16,24 +91,19 @@ export function parseBugsFromHtml(html: string): BugListItem[] {
     // 使用 Cheerio 加载 HTML
     const $ = cheerio.load(html);
 
-    // 查找Bug表格行，可能的选择器
-    const bugSelectors = [
-      "tr[data-id]", // 有 data-id 属性的行
-      "#bugList tbody tr", // Bug列表表格体中的行
-      ".table-bug tbody tr", // 有 table-bug 类的表格中的行
-      "#myBugForm table tbody tr", // 表单中的表格行
-    ];
-
-    let $bugRows = $();
-
-    // 尝试不同的选择器找到Bug行
-    for (const selector of bugSelectors) {
-      $bugRows = $(selector);
-      if ($bugRows.length > 0) {
-        logger.debug(`Found ${$bugRows.length} bug rows using selector: ${selector}`);
-        break;
-      }
+    // 查找Bug表格
+    const $table = $("#bugList");
+    if ($table.length === 0) {
+      logger.warn("Bug table not found");
+      return bugs;
     }
+
+    // 从表头构建列索引映射
+    const columnMap = buildColumnIndexMap($, "#bugList");
+
+    // 查找Bug表格行
+    const $bugRows = $table.find("tbody tr");
+    logger.debug(`Found ${$bugRows.length} bug rows`);
 
     // 遍历每一行提取Bug信息
     $bugRows.each((index, row) => {
@@ -44,13 +114,24 @@ export function parseBugsFromHtml(html: string): BugListItem[] {
 
       if (!bugId) return; // 跳过没有ID的行
 
+      // 获取所有 td 单元格
+      const $cells = $row.find("td");
+
+      // 辅助函数：根据列名获取单元格
+      const getCell = (columnName: string) => {
+        const idx = columnMap.get(columnName);
+        return idx !== undefined ? $cells.eq(idx) : null;
+      };
+
       // 提取Bug标题
-      const title = $row.find(".text-left.nobr a").text().trim();
+      const titleCell = getCell("title");
+      const title = titleCell?.find("a").text().trim() || "";
       logger.debug("bugService.ts ~ parseBugsFromHtml ~ title:", title);
 
       // 提取严重程度
-      const severityElement = $row.find(".c-severity .label-severity");
-      const severityDataValue = severityElement.attr("data-severity");
+      const severityCell = getCell("severity");
+      const severityElement = severityCell?.find(".label-severity");
+      const severityDataValue = severityElement?.attr("data-severity");
       let severity: BugSeverity;
       if (severityDataValue === "1") {
         severity = BugSeverity.MINOR;
@@ -65,8 +146,9 @@ export function parseBugsFromHtml(html: string): BugListItem[] {
       }
 
       // 提取优先级
-      const priorityElement = $row.find(".label-pri");
-      const priorityTitle = priorityElement.attr("title");
+      const priCell = getCell("pri");
+      const priorityElement = priCell?.find(".label-pri");
+      const priorityTitle = priorityElement?.attr("title");
       let priority: TaskPriority;
       const priorityNum = parseInt(priorityTitle || "3");
       if (priorityNum === 1) {
@@ -82,7 +164,8 @@ export function parseBugsFromHtml(html: string): BugListItem[] {
       }
 
       // 提取Bug类型
-      const typeText = $row.find(".c-type").text().trim();
+      const typeCell = getCell("type");
+      const typeText = typeCell?.attr("title") || typeCell?.text().trim() || "";
       let bugType: BugType;
       switch (typeText) {
         case "代码错误":
@@ -117,24 +200,29 @@ export function parseBugsFromHtml(html: string): BugListItem[] {
       }
 
       // 提取所属产品
-      const product = $row.find(".c-product a").text().trim();
+      const productCell = getCell("product");
+      const product = productCell?.find("a").text().trim() || productCell?.text().trim() || "";
 
       // 提取创建者
-      const openedBy = $row.find(".c-user").eq(0).text().trim();
+      const openedByCell = getCell("openedBy");
+      const openedBy = openedByCell?.text().trim() || "";
 
       // 提取确认状态
-      const confirmElement = $row.find(".c-confirm");
-      const confirmText = confirmElement.text().trim();
+      const confirmCell = getCell("confirm");
+      const confirmText = confirmCell?.text().trim() || "";
       const confirmed = !confirmText.includes("未确认");
 
       // 提取截止日期
-      const deadline = $row.find(".c-date.text-center").text().trim();
+      const deadlineCell = getCell("deadline");
+      const deadline = deadlineCell?.text().trim() || "";
 
       // 提取解决者
-      const resolvedBy = $row.find(".c-user").eq(1).text().trim();
+      const resolvedByCell = getCell("resolvedBy");
+      const resolvedBy = resolvedByCell?.text().trim() || "";
 
       // 提取解决方案
-      const resolutionText = $row.find(".c-resolution").text().trim();
+      const resolutionCell = getCell("resolution");
+      const resolutionText = resolutionCell?.text().trim() || "";
       let resolution: BugResolution | "" = "";
       switch (resolutionText) {
         case "已解决":
