@@ -11,6 +11,58 @@ import { logger } from "../utils/logger";
 import { fetchTaskFormDetails, finishTask, FinishTaskParams } from "../utils/taskService";
 import { SessionRefreshAction } from "./SessionRefreshAction";
 
+/** 工作日常量 */
+const WORK_START_HOUR = 9; // 上班时间 09:00
+const WORK_END_HOUR = 18; // 下班时间 18:00
+const HOURS_PER_DAY = 8; // 每天工作 8 小时
+
+/**
+ * 根据开始时间和消耗工时计算结束时间
+ *
+ * 计算逻辑：
+ *
+ * - 每个工作日 8 小时 (09:00 - 18:00)
+ * - 8 小时 → 当天 18:00
+ * - 4 小时 → 当天 13:00 (09:00 + 4)
+ * - 16 小时 → 次日 18:00 (2 个工作日)
+ * - 24 小时 → 第三天 18:00 (3 个工作日)
+ *
+ * @param startDateTime - 开始时间 (YYYY-MM-DD HH:mm)
+ * @param consumedHours - 消耗工时
+ * @returns 结束时间 (YYYY-MM-DD HH:mm)
+ */
+function calculateFinishTime(startDateTime: string, consumedHours: number): string {
+  if (!startDateTime || consumedHours <= 0) {
+    return dayjs().format("YYYY-MM-DD HH:mm");
+  }
+
+  const start = dayjs(startDateTime);
+
+  // 计算需要的工作天数和剩余小时
+  const daysNeeded = Math.ceil(consumedHours / HOURS_PER_DAY);
+  const remainingHours = consumedHours % HOURS_PER_DAY;
+
+  let finishTime: dayjs.Dayjs;
+
+  if (remainingHours === 0) {
+    // 刚好完成整数天，结束于第 daysNeeded 天的 18:00
+    // 例如: 24小时 = 3天，从 12.10 开始，结束于 12.12 18:00 (加 2 天)
+    finishTime = start
+      .add(daysNeeded - 1, "day")
+      .hour(WORK_END_HOUR)
+      .minute(0);
+  } else {
+    // 有剩余小时，结束于第 daysNeeded 天的 09:00 + remainingHours
+    // 例如: 12小时 = 1天8小时 + 4小时，从 12.10 开始，结束于 12.11 13:00
+    finishTime = start
+      .add(daysNeeded - 1, "day")
+      .hour(WORK_START_HOUR + remainingHours)
+      .minute(0);
+  }
+
+  return finishTime.format("YYYY-MM-DD HH:mm");
+}
+
 interface FinishTaskFormProps {
   task: Task;
   onFinished?: () => void;
@@ -32,9 +84,16 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
   const [formUid, setFormUid] = useState<string>("");
 
   // 预设默认值
-  const now = dayjs().format("YYYY-MM-DD HH:mm");
   const defaultConsumed = task.consumed || "0";
-  const defaultCurrentConsumed = "8";
+  // 默认当前消耗工时为预计工时
+  const defaultCurrentConsumed = task.estimate || "8";
+  // 默认实际开始时间为预计开始日期 + 09:00
+  const defaultRealStarted = task.estimatedStart
+    ? `${task.estimatedStart} 09:00`
+    : dayjs().format("YYYY-MM-DD") + " 09:00";
+  // 默认完成时间根据开始时间和消耗工时计算
+  const defaultFinishedDate = calculateFinishTime(defaultRealStarted, parseFloat(defaultCurrentConsumed) || 8);
+  console.log("🚀 ~ FinishTaskForm.tsx:89 ~ FinishTaskForm ~ defaultFinishedDate:", defaultFinishedDate);
 
   // 计算总消耗工时
   const calculateTotalConsumed = (current: string) => {
@@ -54,8 +113,8 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
       currentConsumed: defaultCurrentConsumed,
       consumed: calculateTotalConsumed(defaultCurrentConsumed),
       assignedTo: "", // Will be set after loading form details
-      realStarted: "",
-      finishedDate: now,
+      realStarted: defaultRealStarted,
+      finishedDate: defaultFinishedDate,
       comment: "client: raycast/zentao",
     },
   });
@@ -91,13 +150,20 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
     }
   };
 
-  // Watch currentConsumed to update total consumed
+  // Watch currentConsumed and realStarted to update total consumed and finish time
   const currentConsumed = watch("currentConsumed");
+  const realStarted = watch("realStarted");
 
   useEffect(() => {
     const newTotal = calculateTotalConsumed(currentConsumed);
     setValue("consumed", newTotal);
-  }, [currentConsumed, setValue]);
+
+    // 重新计算完成时间
+    const hours = parseFloat(currentConsumed) || 8;
+    const startTime = realStarted || defaultRealStarted;
+    const newFinishedDate = calculateFinishTime(startTime, hours);
+    setValue("finishedDate", newFinishedDate);
+  }, [currentConsumed, realStarted, setValue]);
 
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
@@ -236,6 +302,11 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
         )}
       />
 
+      <Form.Description
+        title={t("taskForm.actualStartTime")}
+        text={realStarted ? dayjs(realStarted, "YYYY-MM-DD HH:mm").format("YYYY-MM-DD HH:mm") : "-"}
+      />
+
       <Controller
         name="finishedDate"
         control={control}
@@ -250,6 +321,11 @@ export function FinishTaskForm({ task, onFinished }: FinishTaskFormProps) {
             error={errors.finishedDate?.message}
           />
         )}
+      />
+
+      <Form.Description
+        title={t("taskForm.finishTime")}
+        text={watch("finishedDate") ? dayjs(watch("finishedDate"), "YYYY-MM-DD HH:mm").format("YYYY-MM-DD HH:mm") : "-"}
       />
 
       <Form.Separator />
